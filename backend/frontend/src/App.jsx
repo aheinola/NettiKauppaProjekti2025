@@ -23,10 +23,10 @@ function App() {
 
           {/* Categories (hidden on mobile unless menu is open) */}
           <div className={`kategoriat ${menuOpen ? 'open' : ''}`}>
-            <h2>kategoria</h2>
-            <h2>kategoria</h2>
-            <h2>kategoria</h2>
-            <h2>kategoria</h2>
+            <a>Komponentit</a>
+            <a>Konsolit</a>
+            <a>Oheislaitteet</a>
+            <a>Pelit</a>
           </div>
         </div>
 
@@ -37,6 +37,8 @@ function App() {
           <h2>Ostoskori</h2>
         </div>
       </nav>
+
+      
     </div>
   )
 }
