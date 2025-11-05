@@ -1,0 +1,19 @@
+{
+  "name": "nettikauppaprojekti2025",
+  "version": "1.0.0",
+  "description": "Gradian oppilaitten tekemä projekti, jossa tarkoituksena on tehdä nettikauppa.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aheinola/NettiKauppaProjekti2025.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aheinola/NettiKauppaProjekti2025/issues"
+  },
+  "homepage": "https://github.com/aheinola/NettiKauppaProjekti2025#readme"
+}
