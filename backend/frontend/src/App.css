@@ -7,6 +7,7 @@ nav {
   justify-content: space-between;
   border-bottom: 1px solid #D9D9D9;
   flex-wrap: wrap;
+  position: sticky;
 }
 
 h1 {
@@ -22,14 +23,14 @@ h2 {
 .otsikko-ja-kategoriat {
   display: flex;
   align-items: center;
-  gap: clamp(1em, 2vw, 1.5em);
+  gap: clamp(1em, 2vw, 3em);
   flex-wrap: wrap;
 }
 
 /* Kategoriat */
 .kategoriat {
   display: flex;
-  gap: clamp(1em, 3vw, 3em);
+  gap: clamp(1em, 3vw, 2em);
   flex-wrap: wrap;
   transition: all 0.3s ease-in-out;
   align-items: center;
@@ -38,7 +39,6 @@ h2 {
 .kategoriat a{
   font-size: clamp(1rem, 1.5vw, 0.9rem);
   font-weight: 400;
-  color: inherit;
 }
 
 /* User + Cart section */
@@ -55,7 +55,7 @@ input {
   width: clamp(200px, 30vw, 600px);
   border-radius: 10px;
   border: none;
-  background-color: #d9d9d9;
+  background-color: #e6e6e6;
   color: #213547;
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -147,7 +147,7 @@ input {
   }
 
   input {
-    width: 70%;
+    width: 92%;
     margin-top: 1em;
   }
 }
@@ -160,5 +160,106 @@ input {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+/* ----- HERO SECTION ----- */
+.hero {
+  background-image: url(assets/verkkokauppa_tausta.jpg);
+  background-size: cover;
+  background-position: center;
+  padding: clamp(8rem, 15vh, 20rem) clamp(1em, 8vw, 10em);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 70vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Optional: dark overlay for better text contrast */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  opacity: 0;
+  animation: fadeSlideIn 1.2s ease-out forwards;
+}
+
+/* Slight delay for subheading and buttons for a staggered effect */
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  margin-bottom: 0.5em;
+  margin-top: 0;
+  font-weight: 500;
+  line-height: 1.1;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease-out 0.3s forwards;
+}
+
+.hero h2 {
+  font-size: clamp(1.1rem, 2vw, 1.7rem);
+  margin-top: 0;
+  color: #D9D9D9;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease-out 0.6s forwards;
+}
+
+.hero-buttons {
+  margin-top: 2em;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease-out 0.9s forwards;
+}
+
+.hero-buttons button {
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.hero-buttons button:hover {
+  background-color: #e05500;
+}
+
+/* ----- KEYFRAMES ----- */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -6,9 +6,9 @@ function App() {
 
   return (
     <div>
-      <nav>
+      <nav id="home">
         <div className="otsikko-ja-kategoriat">
-          <h1>NettiKauppa</h1>
+          <h1><a href='#home'>NettiKauppa</a></h1>
 
           {/* Hamburger icon (visible only on mobile) */}
           <button
@@ -38,7 +38,23 @@ function App() {
         </div>
       </nav>
 
-      
+      <header className='hero'>
+        <div className='hero-content'>
+          <h1>Uusimmat tuotteet, Parhaat hinnat</h1>
+          <h2>Discover our curated collection of premium electronics and accessories. Shop now and enjoy free shipping on orders over $50.</h2>
+
+          <div className="hero-buttons">
+            <button>Shop Now</button>
+            <button>Learn More</button>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section>
+          <h2>Suosituimmat tuotteet</h2>
+        </section>
+      </main>
     </div>
   )
 }
