@@ -1,126 +1,121 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { supabase } = require('./database.js');
+
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get('/products', async (request, response) => {
-  const { data, error } = await supabase.from('products').select('*');
-  if (error) {
-    console.error('Error fetching products:', error);
-    return response.status(500).json({ error: 'Database error' });
-  }
-  response.json(data);
-});
+const saltRounds = 10;
 
-app.get('/products/:id', async (request, response) => {
-  const { id } = request.params;
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('product_id', id)
-    .single();
-  if (error) {
-    if (error.code === 'PGRST116') { // Not found
-      return response.status(404).json({ error: 'Product not found' });
+// 🧱 REGISTER USER
+app.post('/shop_user/register', async (req, res) => {
+  const { user_name, password } = req.body;
+
+  if (!user_name || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const { data, error } = await supabase
+      .from('shop_user')
+      .insert([{ user_name, password: hashedPassword }])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating user:', error);
+      return res.status(500).json({ error: 'Database error' });
     }
-    console.error('Error fetching product:', error);
-    return response.status(500).json({ error: 'Database error' });
+
+    delete data.password;
+    res.status(201).json({ message: 'User created', user: data });
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
-  response.json(data);
-});
+}); 
 
-app.post('/products', async (request, response) => {
-  const body = request.body;
-  const { data, error } = await supabase
-    .from('products')
-    .insert([{product_name: body.product_name, product_price: body.product_price, product_category: body.product_category }])
-    .select()
-    .single();
-  if (error) {
-    console.error('Error creating product:', error);
-    return response.status(500).json({ error: 'Database error' });
+// 🔑 LOGIN USER
+app.post('/shop_user/login', async (req, res) => {
+  const { user_name, password } = req.body;
+
+  if (!user_name || !password) {
+    return res.status(400).json({ error: 'Username and password required' });
   }
-  response.status(201).json(data);
-});
 
-app.delete('/products/:id', async (request, response) => {
-  const { id } = request.params;
-  const { data, error } = await supabase
-    .from('products')
-    .delete()
-    .eq('product_id', id)
-    .select();
-  response.json(data);
-  if (error) {
-    console.error('Error deleting product', error);
-    return response.status(500).json({ error: 'Database error' });
-  }
-});
+  try {
+    const { data: user, error } = await supabase
+      .from('shop_user')
+      .select('*')
+      .eq('user_name', user_name)
+      .single();
 
-
-
-
-
-
-
-app.get('/shop_user', async (request, response) => {
-  const { data, error } = await supabase.from('shop_user').select('*');
-  if (error) {
-    console.error('Error fetching user:', error);
-    return response.status(500).json({ error: 'Database error' });
-  }
-  response.json(data);
-});
-
-app.get('/shop_user/:id', async (request, response) => {
-  const { id } = request.params;
-  const { data, error } = await supabase
-    .from('shop_user')
-    .select('*')
-    .eq('user_id', id)
-    .single();
-  if (error) { 
-    if (error.code === 'PGRST116') { // Not found
-      return response.status(404).json({ error: 'User not found' });
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid username or password' });
     }
-    console.error('Error fetching user:', error);
-    return response.status(500).json({ error: 'Database error' });
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    // ✅ Issue JWT Token
+    const token = jwt.sign(
+      { user_id: user.user_id, user_name: user.user_name },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    delete user.password;
+    res.json({ message: 'Login successful', token, user });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
-  response.json(data);
 });
 
-app.post('/shop_user', async (request, response) => {
-  const body = request.body;
+// 🧩 Middleware to verify JWT
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Expect "Bearer TOKEN"
+
+  if (!token) return res.status(401).json({ error: 'Access denied. Token required.' });
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: 'Invalid or expired token' });
+
+    req.user = user; // Attach decoded payload
+    next();
+  });
+}
+
+// 🔒 Protected route example
+app.get('/profile', authenticateToken, async (req, res) => {
+  const { user_id } = req.user;
+
   const { data, error } = await supabase
     .from('shop_user')
-    .insert([{user_name: body.user_name }])
-    .select()
+    .select('user_id, user_name')
+    .eq('user_id', user_id)
     .single();
+
   if (error) {
-    console.error('Error creating user:', error);
-    return response.status(500).json({ error: 'Database error' });
+    console.error('Error fetching profile:', error);
+    return res.status(500).json({ error: 'Database error' });
   }
-  response.status(201).json(data);
+
+  res.json({ message: 'Profile data', profile: data });
 });
 
-app.delete('/shop_user/:id', async (request, response) => {
-  const { id } = request.params;
-  const { data, error } = await supabase
-    .from('shop_user')
-    .delete()
-    .eq('user_id', id)
-    .select();
-  response.json(data);
-  if (error) {
-    console.error('Error deleting user', error);
-    return response.status(500).json({ error: 'Database error' });
-  }
-});
-
+// Start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`✅ Server running at http://localhost:${port}`);
 });
