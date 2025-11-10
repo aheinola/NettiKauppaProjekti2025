@@ -38,8 +38,8 @@ nav.scrolled .kategoriat {
 nav.scrolled .hamburger {
   display: flex;
   position: fixed;
-  top: 1.8rem;
-  right: 1.5rem;
+  top: 2.8rem;
+  right: 2.5rem;
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
@@ -47,6 +47,11 @@ nav.scrolled .hamburger {
   border: none;
   z-index: 9999;
   transition: opacity 0.3s ease;
+  animation: fadeInFixed 0.8s ease forwards;
+}
+
+nav.scrolled .hamburger .bar {
+  background-color: #ffffff; /* white bars for dark hero bg */
 }
 
 /* Reset hamburger look when at top */
@@ -66,11 +71,11 @@ nav:not(.scrolled) .hamburger {
 @keyframes fadeInFixed {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateX(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
@@ -135,8 +140,8 @@ input {
   display: none;
   flex-direction: column;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 3rem;
+  height: 3rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -147,8 +152,8 @@ input {
 .hamburger .bar {
   height: 3px;
   width: 100%;
-  background-color: #ffffff;
-  margin: 4px 0;
+  background-color: black;
+  margin: 6px 0;
   border-radius: 2px;
   transition: all 0.3s ease;
 }
@@ -160,25 +165,27 @@ input {
 
 /* Animate hamburger -> X */
 .hamburger .bar.open:nth-child(1) {
-  transform: translateY(12px) rotate(45deg);
+  transform: translateY(14px) rotate(47deg);
 }
 .hamburger .bar.open:nth-child(2) {
   opacity: 0;
 }
 .hamburger .bar.open:nth-child(3) {
-  transform: translateY(-10px) rotate(-45deg);
+  transform: translateY(-14px) rotate(-45deg);
 }
 
 /* ----- RESPONSIVE BEHAVIOR ----- */
 @media (max-width: 900px) {
   nav {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: start;
   }
 
   .hamburger {
     display: flex;
   }
+
+
 
   .kategoriat {
     gap: 2em;
@@ -233,8 +240,8 @@ input {
   background-color: #ffffff;
   display: flex;
   position: fixed;
-  top: 0.6rem;
-  right: 4.2rem;
+  top: 2rem;
+  right: 5.2rem;
   z-index: 1;
   padding: 1em;
   gap: 1em;
@@ -250,9 +257,15 @@ input {
   text-decoration: none;
   color: #213547;
   font-size: 1rem;
-  padding: 0.5rem 0.2rem;
+  padding: 0.5rem 0.6rem;
   width: 100%;
   transition: color 0.2s ease;
+}
+
+@media (max-width: 900px) {
+  .dropdown-menu a {
+  padding: 0.5rem 0.2rem;
+  }
 }
 
 .dropdown-menu a:hover {
@@ -273,17 +286,6 @@ input {
   to {
     opacity: 1;
     transform: translateX(-10px);
-  }
-}
-
-@keyframes slideRight {
-  from {
-    opacity: 0;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-10px);
   }
 }
 
@@ -377,6 +379,17 @@ input {
   }
 }
 
+/* When navbar is over the dark hero */
+nav.on-hero .hamburger .bar {
+  background-color: #ffffff;
+}
+
+/* When navbar is over the light main section */
+nav.on-main .hamburger .bar {
+  background-color: #213547;
+}
+
+
 @keyframes fadeUp {
   0% {
     opacity: 0;
@@ -388,3 +401,44 @@ input {
   }
 }
 
+/* main section */
+
+section {
+  padding: 1em clamp(1em, 8vw, 10em);
+}
+
+.main-otsikko h2 {
+  font-size: clamp(2.5rem, 3vw, 1.5rem);
+  font-weight: 500;
+}
+
+.main-otsikko h3 {
+  font-weight: 400;
+  color: #5b5b5b;
+}
+
+.main-otsikko h2, h3 {
+  margin: 0;
+}
+
+.main-otsikko {
+  margin-top: 3em;
+  margin-bottom: 2em;
+}
+
+.wrapper {
+    display: flex;
+  flex-direction: column;
+  gap: 3em;
+}
+
+.tuotteet-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 900px) {
+  .tuotteet-wrapper {
+    flex-direction: column;
+  }
+}
