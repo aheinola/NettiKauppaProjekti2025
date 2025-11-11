@@ -296,7 +296,7 @@ input {
 
 /* ----- HERO SECTION ----- */
 .hero {
-  background-image: url(assets/verkkokauppa_tausta.jpg);
+  background-image: url(../assets/verkkokauppa_tausta.jpg);
   background-size: cover;
   background-position: center;
   padding: clamp(8rem, 15vh, 20rem) clamp(1em, 8vw, 10em);
