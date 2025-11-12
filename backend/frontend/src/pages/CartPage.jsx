@@ -1,4 +1,5 @@
 import './CartPage.css'
+import CartProduct from '../product_component_cart/CartProduct'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa'
