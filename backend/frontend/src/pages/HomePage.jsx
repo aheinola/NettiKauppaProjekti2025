@@ -50,7 +50,7 @@ function HomePage() {
   // Add to cart function
   const handleAddToCart = async (productId) => {
     const userId = 1 // TODO: Get from login system
-    
+
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/cart`, {
         method: 'POST',
@@ -61,12 +61,10 @@ function HomePage() {
           quantity: 1
         })
       })
-      
+
       if (!res.ok) throw new Error('Failed to add to cart')
-      alert('Tuote lisätty ostoskoriin!')
     } catch (err) {
       console.error('Error adding to cart:', err)
-      alert('Virhe lisättäessä tuotetta')
     }
   }
 
@@ -87,10 +85,10 @@ function HomePage() {
         <div className="otsikko-ja-kategoriat">
           <h1><Link to="/">NettiKauppa</Link></h1>
           <div className={`kategoriat ${menuOpen ? 'open' : ''}`}>
-            <a href="#komponentit">Komponentit</a>
-            <a href="#konsolit">Konsolit</a>
-            <a href="#oheislaitteet">Oheislaitteet</a>
-            <a href="#pelit">Pelit</a>
+            <a href="#components">Komponentit</a>
+            <a href="#console">Konsolit</a>
+            <a href="#periphirals">Oheislaitteet</a>
+            <a href="#games">Pelit</a>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Kirjaudu</Link></h2>
@@ -103,10 +101,10 @@ function HomePage() {
       {scrolled && menuOpen && (
         <div className='dropdown-menu'>
           <Link to="/" onClick={handleClick}>Koti</Link>
-          <a href="#komponentit" onClick={handleClick}>Komponentit</a>
-          <a href="#konsolit" onClick={handleClick}>Konsolit</a>
-          <a href="#oheislaitteet" onClick={handleClick}>Oheislaitteet</a>
-          <a href="#pelit" onClick={handleClick}>Pelit</a>
+          <a href="#components" onClick={handleClick}>Komponentit</a>
+          <a href="#console" onClick={handleClick}>Konsolit</a>
+          <a href="#periphirals" onClick={handleClick}>Oheislaitteet</a>
+          <a href="#games" onClick={handleClick}>Pelit</a>
           <hr />
           <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
           <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
@@ -155,18 +153,23 @@ function HomePage() {
         </section>
 
         {/* CATEGORY SECTIONS */}
-        {['komponentit', 'konsolit', 'oheislaitteet', 'pelit'].map((cat) => (
-          <section className='kategoria' key={cat}>
+        {[
+          { key: 'components', display: 'Komponentit', dbName: 'components' },
+          { key: 'console', display: 'Konsolit', dbName: 'console' },
+          { key: 'periphirals', display: 'Oheislaitteet', dbName: 'periphirals' },
+          { key: 'games', display: 'Pelit', dbName: 'games' }
+        ].map((cat) => (
+          <section className='kategoria' key={cat.key}>
             <div className='main-otsikko'>
-              <h2 id={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
+              <h2 id={cat.key}>{cat.display}</h2>
               <hr />
-              <h3><a href={`#${cat}`}>Kaikki {cat}</a></h3>
+              <h3><a href={`#${cat.key}`}>Kaikki {cat.display.toLowerCase()}</a></h3>
             </div>
 
             <div className='wrapper'>
               <div className='tuotteet-wrapper'>
                 {products
-                  .filter((p) => p.product_category?.toLowerCase() === cat)
+                  .filter((p) => p.product_category?.toLowerCase() === cat.dbName.toLowerCase())
                   .map((product) => (
                     <ProductCard
                       key={product.product_id}
@@ -194,10 +197,10 @@ function HomePage() {
           <div className="footer-section">
             <h3>Kauppa</h3>
             <ul>
-              <li><a href="#komponentit">Komponentit</a></li>
-              <li><a href="#konsolit">Konsolit</a></li>
-              <li><a href="#oheislaitteet">Oheislaitteet</a></li>
-              <li><a href="#pelit">Pelit</a></li>
+              <li><a href="#components">Komponentit</a></li>
+              <li><a href="#console">Konsolit</a></li>
+              <li><a href="#periphirals">Oheislaitteet</a></li>
+              <li><a href="#games">Pelit</a></li>
             </ul>
           </div>
 

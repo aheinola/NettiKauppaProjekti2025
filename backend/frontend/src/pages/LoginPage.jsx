@@ -6,7 +6,7 @@ function LoginPage() {
     if (window.history.length > 1) {
       window.history.back()
     } else {
-      window.location.href="/"
+      window.location.href="/" 
     }
   }
   const dontWork = (e) => {

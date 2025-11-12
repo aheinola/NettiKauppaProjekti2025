@@ -58,10 +58,10 @@ function CartPage() {
         body: JSON.stringify({ quantity: currentQuantity + 1 })
       })
       if (!res.ok) throw new Error('Failed to update cart')
-      
+
       // Update local state
-      setCartItems(cartItems.map(item => 
-        item.cart_id === cartId 
+      setCartItems(cartItems.map(item =>
+        item.cart_id === cartId
           ? { ...item, quantity: currentQuantity + 1 }
           : item
       ))
@@ -85,10 +85,10 @@ function CartPage() {
         body: JSON.stringify({ quantity: currentQuantity - 1 })
       })
       if (!res.ok) throw new Error('Failed to update cart')
-      
+
       // Update local state
-      setCartItems(cartItems.map(item => 
-        item.cart_id === cartId 
+      setCartItems(cartItems.map(item =>
+        item.cart_id === cartId
           ? { ...item, quantity: currentQuantity - 1 }
           : item
       ))
@@ -104,7 +104,7 @@ function CartPage() {
         method: 'DELETE'
       })
       if (!res.ok) throw new Error('Failed to remove item')
-      
+
       // Update local state
       setCartItems(cartItems.filter(item => item.cart_id !== cartId))
     } catch (err) {
@@ -113,9 +113,36 @@ function CartPage() {
   }
 
   // Calculate total
-  const total = cartItems.reduce((sum, item) => 
+  const total = cartItems.reduce((sum, item) =>
     sum + (item.products.product_price * item.quantity), 0
   )
+
+  // Add this function in CartPage component
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) {
+      alert('Ostoskori on tyhjä!')
+      return
+    }
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId })
+      })
+
+      if (!res.ok) throw new Error('Failed to create order')
+
+      const data = await res.json()
+      alert(`Tilaus luotu! Tilausnumero: ${data.order.order_id}`)
+
+      // Clear cart from state
+      setCartItems([])
+    } catch (err) {
+      console.error('Error creating order:', err)
+      alert('Virhe tilauksen luomisessa')
+    }
+  }
 
   return (
     <div>
@@ -168,7 +195,7 @@ function CartPage() {
 
             {loading && <p>Ladataan ostoskoria...</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            
+
             {!loading && !error && cartItems.length === 0 && (
               <p>Ostoskori on tyhjä.</p>
             )}
@@ -189,10 +216,12 @@ function CartPage() {
                     />
                   ))}
                 </div>
-                
+
                 <div className='cart-total'>
                   <h2>Yhteensä: €{total.toFixed(2)}</h2>
-                  <button className='checkout-btn'>Siirry maksamaan</button>
+                  <button className='checkout-btn' onClick={handleCheckout}>
+                    Order
+                  </button>
                 </div>
               </>
             )}
