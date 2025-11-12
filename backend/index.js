@@ -6,6 +6,16 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get('/category', async (request, response) => {
+  const {data, error} = await supabase
+  .from('category')
+  .select('*')
+  if (error) {
+    console.error('Error fetching categories:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+})
+
 app.get('/products', async (request, response) => {
   const { data, error } = await supabase.from('products').select('*').limit(4);
   if (error) {

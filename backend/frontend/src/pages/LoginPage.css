@@ -1,12 +1,11 @@
-
-
+/* === LOGIN HERO SECTION === */
 .login-hero {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 69.5vh;
-  padding: clamp(8rem, 10vh, 20rem) clamp(1em, 8vw, 10em);
+  min-height: 65vh; /* slightly reduced height */
+  padding: clamp(5rem, 8vh, 10rem) clamp(1em, 4vw, 6em); /* tighter spacing */
   color: #ffffff;
   overflow: hidden;
 }
@@ -15,96 +14,93 @@
 .login-hero::before {
   content: "";
   position: absolute;
-  inset: 0; /* shorthand for top:0; right:0; bottom:0; left:0 */
+  inset: 0;
   background: url(../assets/verkkokauppa_tausta.jpg) center/cover no-repeat;
   z-index: 0;
 }
 
-/* Blur + dark overlay using backdrop-filter */
+/* Blur + dark overlay */
 .login-hero::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4); /* dark overlay */
-  backdrop-filter: blur(8px); /* blur only the background behind it */
-  -webkit-backdrop-filter: blur(8px); /* Safari support */
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 1;
 }
 
-/* Content stays on top */
+/* Ensure content stays on top */
 .login-hero > * {
   position: relative;
-  z-index: 2; /* ensures text and buttons are unaffected by blur or overlay */
+  z-index: 2;
 }
 
-
-
-
+/* === LOGIN CONTAINER === */
 .login-container {
   position: relative;
   z-index: 2;
   background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  padding: 2.5rem 3rem;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  padding: clamp(1.5rem, 2vw, 2.5rem) clamp(1.5rem, 3vw, 3rem); /* was 2.5rem 3rem */
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  max-width: 400px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  max-width: 380px;
   width: 100%;
   text-align: center;
-  animation: fadeSlideIn 0.3s ease-out forwards;
+  animation: fadeSlideIn 0.6s ease-out forwards; /* smoother */
 }
 
 .login-container h1 {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 2vw, 2rem); /* responsive title */
   margin-bottom: 0.5rem;
 }
 
 .login-container p {
-  font-size: 0.95rem;
-  margin-bottom: 2rem;
+  font-size: clamp(0.9rem, 1vw, 1rem);
+  margin-bottom: 1.5rem; /* slightly less space */
   color: #ddd;
 }
 
-/* Form styling */
+/* === FORM STYLING === */
 .login-form .form-group {
   text-align: left;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .login-form label {
   display: block;
-  font-size: 0.9rem;
+  font-size: clamp(0.85rem, 0.9vw, 0.95rem);
   margin-bottom: 0.3rem;
   color: #f0f0f0;
 }
 
 .login-form input {
-  width: 100%;
-  padding: 0.75rem 1rem;
+  width: 90%;
+  padding: 0.65rem 1rem;
   border: none;
   border-radius: 6px;
   background-color: rgba(255, 255, 255, 0.15);
   color: #fff;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1vw, 1rem);
   outline: none;
   background-image: none;
-  width: 91%;
 }
 
 .login-form input::placeholder {
   color: #ccc;
 }
 
-/* Button styling */
+/* === BUTTONS === */
 .login-form button {
   width: 100%;
-  padding: 0.9rem;
+  padding: 0.8rem;
   border: none;
   border-radius: 6px;
   background-color: #ff6600;
   color: #fff;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1vw, 1rem);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s ease;
@@ -125,15 +121,15 @@
 }
 
 .login-form .login-button:hover {
-  background-color:#e05500;
+  background-color: #e05500;
 }
 
-/* Extra links */
+/* === EXTRA LINKS === */
 .extra-links {
   margin-top: 1rem;
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
+  font-size: clamp(0.8rem, 0.9vw, 0.9rem);
 }
 
 .extra-links a {
