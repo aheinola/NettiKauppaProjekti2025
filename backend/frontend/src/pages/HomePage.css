@@ -143,8 +143,8 @@ input {
   display: none;
   flex-direction: column;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: 2rem;
+  height: 2rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -156,7 +156,7 @@ input {
   height: 3px;
   width: 100%;
   background-color: black;
-  margin: 6px 0;
+  margin: 4px 0;
   border-radius: 2px;
   transition: all 0.3s ease;
 }
@@ -168,7 +168,7 @@ input {
 
 /* Animate hamburger -> X */
 .hamburger .bar.open:nth-child(1) {
-  transform: translateY(14px) rotate(47deg);
+  transform: translateY(8px) rotate(47deg);
 }
 .hamburger .bar.open:nth-child(2) {
   opacity: 0;
@@ -578,3 +578,74 @@ footer {
 }
 
 
+/* === GLOBAL SCALE FIX === */
+html {
+  font-size: 15px; /* slightly smaller global base */
+}
+
+/* === NAVIGATION === */
+nav {
+  padding: 0.3em clamp(1em, 4vw, 6em); /* was 8vw–10em */
+}
+
+nav h2 {
+  font-size: clamp(0.9rem, 1vw + 0.2rem, 1.2rem);
+}
+
+/* === HEADINGS === */
+h1 {
+  font-size: clamp(1.5rem, 2.5vw, 2.3rem);
+  font-weight: 500;
+}
+
+h2 {
+  font-size: clamp(1rem, 1.5vw, 1.5rem);
+  font-weight: 400;
+}
+
+/* === CATEGORY LINKS === */
+.kategoriat a {
+  font-size: clamp(0.9rem, 1vw, 1.2rem);
+}
+
+/* === HERO SECTION === */
+.hero {
+  padding: clamp(6rem, 10vh, 12rem) clamp(1em, 4vw, 6em); /* tighter padding */
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  margin-bottom: 0.5em;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.hero h2 {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  color: #d9d9d9;
+  line-height: 1.4;
+}
+
+/* === MAIN SECTION === */
+section {
+  padding: 1em clamp(1em, 4vw, 6em);
+}
+
+.main-otsikko h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+  font-weight: 500;
+}
+
+/* === FOOTER === */
+footer {
+  padding: 3em clamp(1em, 4vw, 6em); /* less padding */
+}
+
+/* === OPTIONAL: GENTLE WHOLE-PAGE SCALE === */
+/* Uncomment if you still feel it’s slightly large */
+/*
+body {
+  transform: scale(0.95);
+  transform-origin: top center;
+}
+*/
