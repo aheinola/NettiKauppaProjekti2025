@@ -8,6 +8,9 @@ function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [onHero, setOnHero] = useState(true)
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const handleClick = (event) => {
     event.preventDefault()
@@ -25,6 +28,24 @@ function HomePage() {
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Fetch products from backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/products`)
+        if (!res.ok) throw new Error('Failed to fetch products')
+        const data = await res.json()
+        setProducts(data)
+      } catch (err) {
+        console.error('Error fetching products:', err)
+        setError('Tuotteiden lataaminen epäonnistui.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProducts()
   }, [])
 
   return (
@@ -92,33 +113,20 @@ function HomePage() {
 
           <div className='wrapper'>
             <div className='tuotteet-wrapper'>
-              <ProductCard 
-                image="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1171"
-                title="MacBook Pro"
-                price="399"
-                onAddToCart={() => console.log('Added to cart')}
-              />
-
-              <ProductCard
-                image="https://images.unsplash.com/photo-1613141412501-9012977f1969?auto=format&fit=crop&q=80&w=1170"
-                title="Pelihiiri"
-                price="49"
-                onAddToCart={() => console.log('Added Pelihiiri')}
-              />
-
-              <ProductCard
-                image="https://images.unsplash.com/photo-1614624532983-4ce03382d63d?auto=format&fit=crop&q=80&w=1331"
-                title="Näyttö"
-                price="299"
-                onAddToCart={() => console.log('Added Näyttö')}
-              />
-
-              <ProductCard 
-                image="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1171"
-                title="MacBook Pro"
-                price="399"
-                onAddToCart={() => console.log('Added to cart')}
-              />
+              {loading && <p>Ladataan tuotteita...</p>}
+              {error && <p style={{ color: 'red' }}>{error}</p>}
+              {!loading && !error && products.length === 0 && (
+                <p>Ei tuotteita saatavilla.</p>
+              )}
+              {!loading && !error && products.map((product) => (
+                <ProductCard
+                  key={product.product_id}
+                  product_id={product.product_id}
+                  image={product.product_img}  // ← Changed this
+                  title={product.product_name}
+                  price={product.product_price}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -134,33 +142,18 @@ function HomePage() {
 
             <div className='wrapper'>
               <div className='tuotteet-wrapper'>
-                <ProductCard 
-                  image="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1171"
-                  title="MacBook Pro"
-                  price="399"
-                  onAddToCart={() => console.log('Added to cart')}
-                />
+                {products
+                  .filter((p) => p.product_category?.toLowerCase() === cat)
+                  .map((product) => (
+                    <ProductCard
+                      key={product.product_id}
+                      product_id={product.product_id}
+                      image={product.product_img}  // ← Changed this
+                      title={product.product_name}
+                      price={product.product_price}
+                    />
+                  ))}
 
-                <ProductCard
-                  image="https://images.unsplash.com/photo-1613141412501-9012977f1969?auto=format&fit=crop&q=80&w=1170"
-                  title="Pelihiiri"
-                  price="49"
-                  onAddToCart={() => console.log('Added Pelihiiri')}
-                />
-
-                <ProductCard
-                  image="https://images.unsplash.com/photo-1614624532983-4ce03382d63d?auto=format&fit=crop&q=80&w=1331"
-                  title="Näyttö"
-                  price="299"
-                  onAddToCart={() => console.log('Added Näyttö')}
-                />
-
-                <ProductCard 
-                  image="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1171"
-                  title="MacBook Pro"
-                  price="399"
-                  onAddToCart={() => console.log('Added to cart')}
-                />
               </div>
             </div>
           </section>

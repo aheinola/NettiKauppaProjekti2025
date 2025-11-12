@@ -5,19 +5,20 @@ import { useState, useEffect } from 'react'
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa'
 
 function CartPage() {
-
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [onHero, setOnHero] = useState(true)
+  const [cart, setCart] = useState([])
 
   const handleClick = (event) => {
     event.preventDefault()
     setMenuOpen(false)
   }
 
+  // Handle scrolling styles
   useEffect(() => {
     const handleScroll = () => {
-      const heroHeight = document.querySelector('.hero')?.offsetHeight || 600
+      const heroHeight = document.querySelector('.cart-hero')?.offsetHeight || 600
       const scrollY = window.scrollY
 
       setOnHero(scrollY <= heroHeight - 80)
@@ -28,10 +29,42 @@ function CartPage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Load cart from localStorage
+  useEffect(() => {
+    const storedCart = localStorage.getItem('cart')
+    if (storedCart) {
+      setCart(JSON.parse(storedCart))
+    }
+  }, [])
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart))
+  }, [cart])
+
+  const updateQuantity = (id, change) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.product_id === id
+          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          : item
+      )
+    )
+  }
+
+  const removeItem = (id) => {
+    setCart((prevCart) => prevCart.filter((item) => item.product_id !== id))
+  }
+
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + item.product_price * item.quantity,
+    0
+  )
+
   return (
     <div>
       {/* Navigation */}
-      <nav className={`${scrolled ? 'scrolled' : ''} ${onHero ? 'on-hero' : ''}`}>
+      <nav className={`${scrolled ? 'scrolled' : ''} ${onHero ? 'on-hero' : 'on-main'}`}>
         <button
           className="hamburger"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -66,8 +99,8 @@ function CartPage() {
           <a href="#oheislaitteet">Oheislaitteet</a>
           <a href="#pelit">Pelit</a>
           <hr />
-          <Link to="/login">Kirjaudu</Link>
-          <Link to="/cart">Ostoskori</Link>
+          <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
+          <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
         </div>
       )}
 
@@ -78,37 +111,52 @@ function CartPage() {
             <h1>Ostoskori</h1>
 
             <div className='cart-items'>
-              <CartProduct
-                image="https://via.placeholder.com/150"
-                title="Tuote 1"
-                price="€99.99"
-                quantity={1}
-                onIncrease={() => { }}
-                onDecrease={() => { }}
-              />
+              {cart.length === 0 ? (
+                <p>Ostoskorisi on tyhjä.</p>
+              ) : (
+                cart.map((item) => (
+                  <div className="cart-item" key={item.product_id}>
+                    <div className="cart-image">
+                      <img
+                        src={item.image_url || 'https://via.placeholder.com/150'}
+                        alt={item.product_name}
+                      />
+                    </div>
 
-              <CartProduct
-                image="https://via.placeholder.com/150"
-                title="Tuote 1"
-                price="€99.99"
-                quantity={1}
-                onIncrease={() => { }}
-                onDecrease={() => { }}
-              />
+                    <div className="cart-info">
+                      <h3>{item.product_name}</h3>
+                      <p className="price">€{item.product_price}</p>
+                    </div>
 
-              <CartProduct
-                image="https://via.placeholder.com/150"
-                title="Tuote 1"
-                price="€99.99"
-                quantity={1}
-                onIncrease={() => { }}
-                onDecrease={() => { }}
-              />
+                    <div className="cart-actions">
+                      <div className="quantity-controls">
+                        <button onClick={() => updateQuantity(item.product_id, -1)}>-</button>
+                        <span>{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.product_id, 1)}>+</button>
+                      </div>
+                      <button
+                        className="remove-btn"
+                        onClick={() => removeItem(item.product_id)}
+                      >
+                        Poista
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
+
+            {cart.length > 0 && (
+              <div className="cart-summary">
+                <h3>Yhteensä: €{totalPrice.toFixed(2)}</h3>
+                <button className="checkout-btn">Siirry kassalle</button>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
+      {/* FOOTER */}
       <footer>
         <div className="footer-container">
           <div className="footer-section logo">
