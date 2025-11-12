@@ -9,6 +9,10 @@ function LoginPage() {
       window.location.href="/"
     }
   }
+  const dontWork = (e) => {
+    e.preventDefault()
+    alert("invalid credentials" )
+  }
 
   return (
     <div>
@@ -25,7 +29,7 @@ function LoginPage() {
               <label for="password">Password</label>
               <input type="password" id="password" placeholder="Enter your password" required />
             </div>
-            <button className="login-button" type="submit">Login</button>
+            <button className="login-button" type="submit" onClick={dontWork}>Login</button>
             <button className='back-button' onClick={goBack}>Back</button>
             <div class="extra-links">
               <a href="#">Forgot password?</a>

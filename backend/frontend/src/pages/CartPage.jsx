@@ -5,19 +5,22 @@ import { useState, useEffect } from 'react'
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa'
 
 function CartPage() {
-
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [onHero, setOnHero] = useState(true)
+  const [cartItems, setCartItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const handleClick = (event) => {
-    event.preventDefault()
+  const userId = 1 // TODO: Get this from your login system later
+
+  const handleClick = () => {
     setMenuOpen(false)
   }
 
   useEffect(() => {
     const handleScroll = () => {
-      const heroHeight = document.querySelector('.hero')?.offsetHeight || 600
+      const heroHeight = document.querySelector('.cart-hero')?.offsetHeight || 600
       const scrollY = window.scrollY
 
       setOnHero(scrollY <= heroHeight - 80)
@@ -28,10 +31,96 @@ function CartPage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Fetch cart items
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/cart/${userId}`)
+        if (!res.ok) throw new Error('Failed to fetch cart')
+        const data = await res.json()
+        setCartItems(data)
+      } catch (err) {
+        console.error('Error fetching cart:', err)
+        setError('Ostoskorin lataaminen epäonnistui.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCart()
+  }, [userId])
+
+  // Increase quantity
+  const handleIncrease = async (cartId, currentQuantity) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/cart/${cartId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity: currentQuantity + 1 })
+      })
+      if (!res.ok) throw new Error('Failed to update cart')
+      
+      // Update local state
+      setCartItems(cartItems.map(item => 
+        item.cart_id === cartId 
+          ? { ...item, quantity: currentQuantity + 1 }
+          : item
+      ))
+    } catch (err) {
+      console.error('Error updating cart:', err)
+    }
+  }
+
+  // Decrease quantity
+  const handleDecrease = async (cartId, currentQuantity) => {
+    if (currentQuantity <= 1) {
+      // Remove item if quantity would be 0
+      handleRemove(cartId)
+      return
+    }
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/cart/${cartId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity: currentQuantity - 1 })
+      })
+      if (!res.ok) throw new Error('Failed to update cart')
+      
+      // Update local state
+      setCartItems(cartItems.map(item => 
+        item.cart_id === cartId 
+          ? { ...item, quantity: currentQuantity - 1 }
+          : item
+      ))
+    } catch (err) {
+      console.error('Error updating cart:', err)
+    }
+  }
+
+  // Remove item
+  const handleRemove = async (cartId) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/cart/${cartId}`, {
+        method: 'DELETE'
+      })
+      if (!res.ok) throw new Error('Failed to remove item')
+      
+      // Update local state
+      setCartItems(cartItems.filter(item => item.cart_id !== cartId))
+    } catch (err) {
+      console.error('Error removing item:', err)
+    }
+  }
+
+  // Calculate total
+  const total = cartItems.reduce((sum, item) => 
+    sum + (item.products.product_price * item.quantity), 0
+  )
+
   return (
     <div>
       {/* Navigation */}
-      <nav className={`${scrolled ? 'scrolled' : ''} ${onHero ? 'on-hero' : ''}`}>
+      <nav className={`${scrolled ? 'scrolled' : ''} ${onHero ? 'on-hero' : 'on-main'}`}>
         <button
           className="hamburger"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -45,10 +134,10 @@ function CartPage() {
         <div className="otsikko-ja-kategoriat">
           <h1><Link to="/">NettiKauppa</Link></h1>
           <div className={`kategoriat ${menuOpen ? 'open' : ''}`}>
-            <a href="#komponentit">Komponentit</a>
-            <a href="#konsolit">Konsolit</a>
-            <a href="#oheislaitteet">Oheislaitteet</a>
-            <a href="#pelit">Pelit</a>
+            <a href="/#komponentit">Komponentit</a>
+            <a href="/#konsolit">Konsolit</a>
+            <a href="/#oheislaitteet">Oheislaitteet</a>
+            <a href="/#pelit">Pelit</a>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Kirjaudu</Link></h2>
@@ -60,55 +149,58 @@ function CartPage() {
 
       {scrolled && menuOpen && (
         <div className='dropdown-menu'>
-          <Link to="/">Koti</Link>
-          <a href="#komponentit">Komponentit</a>
-          <a href="#konsolit">Konsolit</a>
-          <a href="#oheislaitteet">Oheislaitteet</a>
-          <a href="#pelit">Pelit</a>
+          <Link to="/" onClick={handleClick}>Koti</Link>
+          <a href="/#komponentit" onClick={handleClick}>Komponentit</a>
+          <a href="/#konsolit" onClick={handleClick}>Konsolit</a>
+          <a href="/#oheislaitteet" onClick={handleClick}>Oheislaitteet</a>
+          <a href="/#pelit" onClick={handleClick}>Pelit</a>
           <hr />
-          <Link to="/login">Kirjaudu</Link>
-          <Link to="/cart">Ostoskori</Link>
+          <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
+          <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
         </div>
       )}
 
-      {/* HERO SECTION */}
+      {/* CART SECTION */}
       <header className="cart-hero" id="home">
         <div className="cart-hero-content">
           <div className='cart'>
             <h1>Ostoskori</h1>
 
-            <div className='cart-items'>
-              <CartProduct
-                image="https://via.placeholder.com/150"
-                title="Tuote 1"
-                price="€99.99"
-                quantity={1}
-                onIncrease={() => { }}
-                onDecrease={() => { }}
-              />
+            {loading && <p>Ladataan ostoskoria...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            
+            {!loading && !error && cartItems.length === 0 && (
+              <p>Ostoskori on tyhjä.</p>
+            )}
 
-              <CartProduct
-                image="https://via.placeholder.com/150"
-                title="Tuote 1"
-                price="€99.99"
-                quantity={1}
-                onIncrease={() => { }}
-                onDecrease={() => { }}
-              />
-
-              <CartProduct
-                image="https://via.placeholder.com/150"
-                title="Tuote 1"
-                price="€99.99"
-                quantity={1}
-                onIncrease={() => { }}
-                onDecrease={() => { }}
-              />
-            </div>
+            {!loading && !error && cartItems.length > 0 && (
+              <>
+                <div className='cart-items'>
+                  {cartItems.map((item) => (
+                    <CartProduct
+                      key={item.cart_id}
+                      image={item.products.product_img}
+                      title={item.products.product_name}
+                      price={item.products.product_price}
+                      quantity={item.quantity}
+                      onIncrease={() => handleIncrease(item.cart_id, item.quantity)}
+                      onDecrease={() => handleDecrease(item.cart_id, item.quantity)}
+                      onRemove={() => handleRemove(item.cart_id)}
+                    />
+                  ))}
+                </div>
+                
+                <div className='cart-total'>
+                  <h2>Yhteensä: €{total.toFixed(2)}</h2>
+                  <button className='checkout-btn'>Siirry maksamaan</button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>
 
+      {/* FOOTER */}
       <footer>
         <div className="footer-container">
           <div className="footer-section logo">
@@ -119,10 +211,10 @@ function CartPage() {
           <div className="footer-section">
             <h3>Kauppa</h3>
             <ul>
-              <li><a href="#komponentit">Komponentit</a></li>
-              <li><a href="#konsolit">Konsolit</a></li>
-              <li><a href="#oheislaitteet">Oheislaitteet</a></li>
-              <li><a href="#pelit">Pelit</a></li>
+              <li><a href="/#komponentit">Komponentit</a></li>
+              <li><a href="/#konsolit">Konsolit</a></li>
+              <li><a href="/#oheislaitteet">Oheislaitteet</a></li>
+              <li><a href="/#pelit">Pelit</a></li>
             </ul>
           </div>
 
