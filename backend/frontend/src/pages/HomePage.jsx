@@ -59,14 +59,14 @@ function HomePage() {
 
       {scrolled && menuOpen && (
         <div className='dropdown-menu'>
-          <Link to="/">Koti</Link>
+          <a href="#">Koti</a>
           <a href="#komponentit">Komponentit</a>
           <a href="#konsolit">Konsolit</a>
           <a href="#oheislaitteet">Oheislaitteet</a>
           <a href="#pelit">Pelit</a>
           <hr />
-          <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
-          <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
+          <Link to="/login">Kirjaudu</Link>
+          <Link to="/cart">Ostoskori</Link>
         </div>
       )}
 
@@ -171,7 +171,7 @@ function HomePage() {
       <footer>
         <div className="footer-container">
           <div className="footer-section logo">
-            <h2><Link to="/">NettiKauppa</Link></h2>
+            <h2><a href="#">NettiKauppa</a></h2>
             <p>Uusimmat tuotteet, parhaat hinnat – suoraan sinulle.</p>
           </div>
 

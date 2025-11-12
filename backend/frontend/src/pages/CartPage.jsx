@@ -31,7 +31,7 @@ function CartPage() {
   return (
     <div>
       {/* Navigation */}
-      <nav className={`${scrolled ? 'scrolled' : ''} ${onHero ? 'on-hero' : 'on-main'}`}>
+      <nav className={`${scrolled ? 'scrolled' : ''} ${onHero ? 'on-hero' : ''}`}>
         <button
           className="hamburger"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -66,8 +66,8 @@ function CartPage() {
           <a href="#oheislaitteet">Oheislaitteet</a>
           <a href="#pelit">Pelit</a>
           <hr />
-          <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
-          <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
+          <Link to="/login">Kirjaudu</Link>
+          <Link to="/cart">Ostoskori</Link>
         </div>
       )}
 
