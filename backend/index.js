@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/products', async (request, response) => {
-  const { data, error } = await supabase.from('products').select('*');
+  const { data, error } = await supabase.from('products').select('*').limit(4);
   if (error) {
     console.error('Error fetching products:', error);
     return response.status(500).json({ error: 'Database error' });
@@ -59,12 +59,6 @@ app.delete('/products/:id', async (request, response) => {
     return response.status(500).json({ error: 'Database error' });
   }
 });
-
-
-
-
-
-
 
 app.get('/shop_user', async (request, response) => {
   const { data, error } = await supabase.from('shop_user').select('*');
