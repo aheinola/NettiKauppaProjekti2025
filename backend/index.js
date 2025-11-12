@@ -53,18 +53,14 @@ app.delete('/products/:id', async (request, response) => {
     .delete()
     .eq('product_id', id)
     .select();
-  response.json(data);
-  if (error) {
+  
+  if (error) {  // ← Check error first
     console.error('Error deleting product', error);
     return response.status(500).json({ error: 'Database error' });
   }
+  
+  response.json(data);  // ← Then send response
 });
-
-
-
-
-
-
 
 app.get('/shop_user', async (request, response) => {
   const { data, error } = await supabase.from('shop_user').select('*');
