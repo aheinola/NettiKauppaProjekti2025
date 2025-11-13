@@ -248,7 +248,7 @@ app.delete('/cart/user/:user_id', async (request, response) => {
 
 // Create order from cart
 app.post('/orders', async (request, response) => {
-  const { user_id } = request.body;
+  const { user_id, name, email, address } = request.body;
   
   try {
     // Get cart items with product details
@@ -270,11 +270,14 @@ app.post('/orders', async (request, response) => {
     // Create order
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert([{ user_id, total_price: total, status: 'pending' }])
+      .insert([{ user_id, total_price: total, status: 'pending', name, email, address }])
       .select()
       .single();
     
-    if (orderError) throw orderError;
+    if (orderError) {
+      console.error('Error creating order:', orderError);
+      throw orderError;
+    }
     
     // Create order items
     const orderItems = cartItems.map(item => ({
@@ -288,7 +291,10 @@ app.post('/orders', async (request, response) => {
       .from('order_items')
       .insert(orderItems);
     
-    if (itemsError) throw itemsError;
+    if (itemsError) {
+      console.error('Error creating order items:', itemsError);
+      throw itemsError;
+    }
     
     // Clear cart
     const { error: clearError } = await supabase
@@ -296,13 +302,30 @@ app.post('/orders', async (request, response) => {
       .delete()
       .eq('user_id', user_id);
     
-    if (clearError) throw clearError;
+    if (clearError) {
+      console.error('Error clearing cart:', clearError);
+      throw clearError;
+    }
     
     response.status(201).json({ order, message: 'Order created successfully' });
   } catch (error) {
     console.error('Error creating order:', error);
-    response.status(500).json({ error: 'Failed to create order' });
+    response.status(500).json({ error: 'Failed to create order', details: error.message });
   }
+});
+
+// Get all orders
+app.get('/orders', async (request, response) => {
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .order('order_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching orders:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  response.json(data);
 });
 
 // Get user's orders
