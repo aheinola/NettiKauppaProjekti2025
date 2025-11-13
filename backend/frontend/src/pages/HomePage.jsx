@@ -230,7 +230,7 @@ function HomePage() {
             <h3>In-store links</h3>
             <ul>
               <li><a href="components">Components</a></li>
-              <li><a href="console">Consoles</a></li>
+              <li><a href="consoles">Consoles</a></li>
               <li><a href="periphirals">Periphirals</a></li>
               <li><a href="games">Games</a></li>
             </ul>

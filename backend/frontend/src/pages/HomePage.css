@@ -136,6 +136,7 @@ input {
   background-size: 18px 18px;
   background-position: right 15px center;
   transition: all 250ms ease-in-out;
+  display: none;
 }
 
 /* HAMBURGER ICON */

@@ -10,6 +10,9 @@ function ComponentsPage() {
   const [scrolled, setScrolled] = useState(false)
   const [onHero, setOnHero] = useState(true)
   const [categoryImg, setCategoryImg] = useState([])
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +35,44 @@ function ComponentsPage() {
         setCategoryImg(data[0].category_img)
       })
   }, [])
+
+  const handleAddToCart = async (productId) => {
+    const userId = 1 // TODO: Get from login system
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/cart`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          product_id: productId,
+          quantity: 1
+        })
+      })
+
+      if (!res.ok) throw new Error('Failed to add to cart')
+    } catch (err) {
+      console.error('Error adding to cart:', err)
+    }
+  }
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/products/category/components`)
+        if (!res.ok) throw new Error('Failed to fetch products')
+        const data = await res.json()
+        setProducts(data)
+      } catch (err) {
+        console.error('Error fetching products:', err)
+        setError('Tuotteiden lataaminen epäonnistui.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProducts()
+  }, [])
+
   return (
     <div>
       {/* Navigation */}
@@ -91,33 +132,21 @@ function ComponentsPage() {
 
           <div className='wrapper'>
             <div className='tuotteet-wrapper'>
-              <ProductCard
-                image={"https://bmrolbmemttyhlncszxy.supabase.co/storage/v1/object/public/product_images/gpu1.jpg"}
-                title={'tuote'}
-                price={'300'}
-                
-              />
-
-              <ProductCard
-                image={"https://bmrolbmemttyhlncszxy.supabase.co/storage/v1/object/public/product_images/gpu1.jpg"}
-                title={'tuote'}
-                price={'300'}
-                
-              />
-
-              <ProductCard
-                image={"https://bmrolbmemttyhlncszxy.supabase.co/storage/v1/object/public/product_images/gpu1.jpg"}
-                title={'tuote'}
-                price={'300'}
-                
-              />
-
-              <ProductCard
-                image={"https://bmrolbmemttyhlncszxy.supabase.co/storage/v1/object/public/product_images/gpu1.jpg"}
-                title={'tuote'}
-                price={'300'}
-                
-              />
+              {loading && <p>Loading products...</p>}
+              {error && <p style={{ color: 'red' }}>{error}</p>}
+              {!loading && !error && products.length === 0 && (
+                <p>No products available.</p>
+              )}
+              {!loading && !error && products.map((product) => (
+                <ProductCard
+                  key={product.product_id}
+                  product_id={product.product_id}
+                  image={product.product_img}
+                  title={product.product_name}
+                  price={product.product_price}
+                  onAddToCart={() => handleAddToCart(product.product_id)}
+                />
+              ))}
             </div>
           </div>
         </section>
