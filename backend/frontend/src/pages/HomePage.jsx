@@ -133,10 +133,10 @@ function HomePage() {
 
           <div className='wrapper'>
             <div className='tuotteet-wrapper'>
-              {loading && <p>Ladataan tuotteita...</p>}
+              {loading && <p>Loading products...</p>}
               {error && <p style={{ color: 'red' }}>{error}</p>}
               {!loading && !error && products.length === 0 && (
-                <p>Ei tuotteita saatavilla.</p>
+                <p>No products available</p>
               )}
               {!loading && !error && products.map((product) => (
                 <ProductCard
@@ -144,6 +144,7 @@ function HomePage() {
                   product_id={product.product_id}
                   image={product.product_img}
                   title={product.product_name}
+                  product_info={product.product_info}
                   price={product.product_price}
                   onAddToCart={() => handleAddToCart(product.product_id)}
                 />
@@ -176,6 +177,7 @@ function HomePage() {
                       product_id={product.product_id}
                       image={product.product_img}
                       title={product.product_name}
+                      product_info={product.product_info}
                       price={product.product_price}
                       onAddToCart={() => handleAddToCart(product.product_id)}
                     />

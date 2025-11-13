@@ -32,7 +32,7 @@ app.get('/products/category/:category', async (request, response) => {
     .from('products')
     .select('*')
     .eq('product_category', category);
-  
+   
   if (error) {
     console.error('Error fetching products by category:', error);
     return response.status(500).json({ error: 'Database error' });
