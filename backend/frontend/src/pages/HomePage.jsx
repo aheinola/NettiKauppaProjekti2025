@@ -89,7 +89,7 @@ function HomePage() {
             <a href="#console">Consoles</a>
             <a href="#periphirals">Periphirals</a>
             <a href="#games">Games</a>
-            <input type="text" placeholder="Hae" />
+            <input type="text" placeholder="Search" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Login</Link></h2>
               <h2><Link to="/cart">Cart</Link></h2>
