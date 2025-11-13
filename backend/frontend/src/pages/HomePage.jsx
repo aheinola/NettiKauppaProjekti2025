@@ -83,16 +83,16 @@ function HomePage() {
         </button>
 
         <div className="otsikko-ja-kategoriat">
-          <h1><Link to="/">NettiKauppa</Link></h1>
+          <h1><Link to="/">Webstore</Link></h1>
           <div className={`kategoriat ${menuOpen ? 'open' : ''}`}>
-            <a href="#components">Komponentit</a>
-            <a href="#console">Konsolit</a>
-            <a href="#periphirals">Oheislaitteet</a>
-            <a href="#games">Pelit</a>
+            <a href="#components">Components</a>
+            <a href="#console">Consoles</a>
+            <a href="#periphirals">Periphirals</a>
+            <a href="#games">Games</a>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
-              <h2><Link to="/login">Kirjaudu</Link></h2>
-              <h2><Link to="/cart">Ostoskori</Link></h2>
+              <h2><Link to="/login">Login</Link></h2>
+              <h2><Link to="/cart">Cart</Link></h2>
             </div>
           </div>
         </div>
@@ -100,21 +100,21 @@ function HomePage() {
 
       {scrolled && menuOpen && (
         <div className='dropdown-menu'>
-          <Link to="/" onClick={handleClick}>Koti</Link>
-          <a href="#components" onClick={handleClick}>Komponentit</a>
-          <a href="#console" onClick={handleClick}>Konsolit</a>
-          <a href="#periphirals" onClick={handleClick}>Oheislaitteet</a>
-          <a href="#games" onClick={handleClick}>Pelit</a>
+          <Link to="/" onClick={handleClick}>Home</Link>
+          <a href="#components" onClick={handleClick}>Components</a>
+          <a href="#console" onClick={handleClick}>Consoles</a>
+          <a href="#periphirals" onClick={handleClick}>Periphirals</a>
+          <a href="#games" onClick={handleClick}>Games</a>
           <hr />
-          <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
-          <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
+          <Link to="/login" onClick={handleClick}>Login</Link>
+          <Link to="/cart" onClick={handleClick}>Cart</Link>
         </div>
       )}
 
       {/* HERO SECTION */}
       <header className="hero" id="home">
         <div className="hero-content">
-          <h1>Uusimmat tuotteet, Parhaat hinnat</h1>
+          <h1>Newest products, Best prices</h1>
           <h2>Discover our curated collection of premium electronics and accessories.</h2>
           <div className="hero-buttons">
             <button>Shop Now</button>
@@ -127,7 +127,7 @@ function HomePage() {
       <main id='main'>
         <section>
           <div className='main-otsikko'>
-            <h2>Suosituimmat tuotteet</h2>
+            <h2>Most bought products</h2>
             <h3>Discover our latest collection of tech products</h3>
           </div>
 
@@ -154,16 +154,16 @@ function HomePage() {
 
         {/* CATEGORY SECTIONS */}
         {[
-          { key: 'components', display: 'Komponentit', dbName: 'components' },
-          { key: 'console', display: 'Konsolit', dbName: 'console' },
-          { key: 'periphirals', display: 'Oheislaitteet', dbName: 'periphirals' },
-          { key: 'games', display: 'Pelit', dbName: 'games' }
+          { key: 'components', display: 'Components', dbName: 'components' },
+          { key: 'console', display: 'Consoles', dbName: 'console' },
+          { key: 'periphirals', display: 'Periphirals', dbName: 'periphirals' },
+          { key: 'games', display: 'Games', dbName: 'games' }
         ].map((cat) => (
           <section className='kategoria' key={cat.key}>
             <div className='main-otsikko'>
               <h2 id={cat.key}>{cat.display}</h2>
               <hr />
-              <h3><a href={`#${cat.key}`}>Kaikki {cat.display.toLowerCase()}</a></h3>
+              <h3><a href={`#${cat.key}`}>All {cat.display.toLowerCase()}</a></h3>
             </div>
 
             <div className='wrapper'>
@@ -190,31 +190,31 @@ function HomePage() {
       <footer>
         <div className="footer-container">
           <div className="footer-section logo">
-            <h2><Link to="/">NettiKauppa</Link></h2>
-            <p>Uusimmat tuotteet, parhaat hinnat – suoraan sinulle.</p>
+            <h2><Link to="/">Webstore</Link></h2>
+            <p>Newest products, best prices – straight to you.</p>
           </div>
 
           <div className="footer-section">
-            <h3>Kauppa</h3>
+            <h3>In-store links</h3>
             <ul>
-              <li><a href="#components">Komponentit</a></li>
-              <li><a href="#console">Konsolit</a></li>
-              <li><a href="#periphirals">Oheislaitteet</a></li>
-              <li><a href="#games">Pelit</a></li>
+              <li><a href="#components">Components</a></li>
+              <li><a href="#console">Consoles</a></li>
+              <li><a href="#periphirals">Periphirals</a></li>
+              <li><a href="#games">Games</a></li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h3>Yhteystiedot</h3>
+            <h3>Contact us</h3>
             <ul>
-              <li>Sähköposti: <a href="mailto:support@nettikauppa.fi">support@nettikauppa.fi</a></li>
-              <li>Puhelin: +358 40 123 4567</li>
-              <li>Osoite: Helsinki, Suomi</li>
+              <li>Email: <a href="mailto:support@nettikauppa.fi">support@nettikauppa.fi</a></li>
+              <li>Phone: +358 40 123 4567</li>
+              <li>Address: Helsinki, Suomi</li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h3>Seuraa meitä</h3>
+            <h3>Follow us</h3>
             <div className="social-icons">
               <a href="#"><FaFacebookF /></a>
               <a href="#"><FaInstagram /></a>
@@ -224,7 +224,7 @@ function HomePage() {
         </div>
 
         <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} NettiKauppa. Kaikki oikeudet pidätetään.</p>
+          <p>© {new Date().getFullYear()} Webstore. All rights reserved.</p>
         </div>
       </footer>
     </div>
