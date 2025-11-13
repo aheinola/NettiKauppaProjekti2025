@@ -24,6 +24,22 @@ app.get('/products', async (request, response) => {
     return response.status(500).json({ error: 'Database error' });
   }
   response.json(data);
+}); 
+
+app.get('/products/category/:category', async (request, response) => {
+  const { category } = request.params;
+  
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('product_category', category);
+  
+  if (error) {
+    console.error('Error fetching products by category:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  
+  response.json(data);
 });
 
 app.get('/products/:id', async (request, response) => {
@@ -70,12 +86,6 @@ app.delete('/products/:id', async (request, response) => {
     return response.status(500).json({ error: 'Database error' });
   }
 });
-
-
-
-
-
-
 
 app.get('/shop_user', async (request, response) => {
   const { data, error } = await supabase.from('shop_user').select('*');

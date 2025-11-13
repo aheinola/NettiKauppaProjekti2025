@@ -120,7 +120,7 @@ function CartPage() {
   // Add this function in CartPage component
   const handleCheckout = async () => {
     if (cartItems.length === 0) {
-      alert('Ostoskori on tyhjä!')
+      alert('Cart is empty!')
       return
     }
 
@@ -134,13 +134,13 @@ function CartPage() {
       if (!res.ok) throw new Error('Failed to create order')
 
       const data = await res.json()
-      alert(`Tilaus luotu! Tilausnumero: ${data.order.order_id}`)
+      alert(`Order made! Ordernumber: ${data.order.order_id}`)
 
       // Clear cart from state
       setCartItems([])
     } catch (err) {
       console.error('Error creating order:', err)
-      alert('Virhe tilauksen luomisessa')
+      alert('Error creating order. Please try again.')
     }
   }
 
@@ -159,7 +159,7 @@ function CartPage() {
         </button>
 
         <div className="otsikko-ja-kategoriat">
-          <h1><Link to="/">NettiKauppa</Link></h1>
+          <h1><Link to="/">Webstore</Link></h1>
           <div className={`kategoriat ${menuOpen ? 'open' : ''}`}>
             <a href="components">Komponentit</a>
             <a href="consoles">Konsolit</a>
@@ -167,8 +167,8 @@ function CartPage() {
             <a href="games">Pelit</a>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
-              <h2><Link to="/login">Kirjaudu</Link></h2>
-              <h2><Link to="/cart">Ostoskori</Link></h2>
+              <h2><Link to="/login">Login</Link></h2>
+              <h2><Link to="/cart">Cart</Link></h2>
             </div>
           </div>
         </div>
@@ -182,8 +182,8 @@ function CartPage() {
           <a href="periphirals" onClick={handleClick}>Oheislaitteet</a>
           <a href="games" onClick={handleClick}>Pelit</a>
           <hr />
-          <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
-          <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
+          <Link to="/login" onClick={handleClick}>Login</Link>
+          <Link to="/cart" onClick={handleClick}>Cart</Link>
         </div>
       )}
 
@@ -193,11 +193,11 @@ function CartPage() {
           <div className='cart'>
             <h1>Ostoskori</h1>
 
-            {loading && <p>Ladataan ostoskoria...</p>}
+            {loading && <p>Loading cart...</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             {!loading && !error && cartItems.length === 0 && (
-              <p>Ostoskori on tyhjä.</p>
+              <p>Cart is empty.</p>
             )}
 
             {!loading && !error && cartItems.length > 0 && (
@@ -218,7 +218,7 @@ function CartPage() {
                 </div>
 
                 <div className='cart-total'>
-                  <h2>Yhteensä: €{total.toFixed(2)}</h2>
+                  <h2>Total: €{total.toFixed(2)}</h2>
                   <button className='checkout-btn' onClick={handleCheckout}>
                     Order
                   </button>
@@ -233,12 +233,12 @@ function CartPage() {
       <footer>
         <div className="footer-container">
           <div className="footer-section logo">
-            <h2><Link to="/">NettiKauppa</Link></h2>
-            <p>Uusimmat tuotteet, parhaat hinnat – suoraan sinulle.</p>
+            <h2><Link to="/">Webstore</Link></h2>
+            <p>Newest products, best prices – staright to you.</p>
           </div>
 
           <div className="footer-section">
-            <h3>Kauppa</h3>
+            <h3>In-store links</h3>
             <ul>
               <li><a href="components">Komponentit</a></li>
               <li><a href="consoles">Konsolit</a></li>
@@ -248,16 +248,16 @@ function CartPage() {
           </div>
 
           <div className="footer-section">
-            <h3>Yhteystiedot</h3>
+            <h3>Contact us</h3>
             <ul>
-              <li>Sähköposti: <a href="mailto:support@nettikauppa.fi">support@nettikauppa.fi</a></li>
-              <li>Puhelin: +358 40 123 4567</li>
-              <li>Osoite: Helsinki, Suomi</li>
+              <li>Email: <a href="mailto:support@nettikauppa.fi">support@nettikauppa.fi</a></li>
+              <li>Phonenumber: +358 40 123 4567</li>
+              <li>Address: Helsinki, Suomi</li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h3>Seuraa meitä</h3>
+            <h3>Follow us</h3>
             <div className="social-icons">
               <a href="#"><FaFacebookF /></a>
               <a href="#"><FaInstagram /></a>
@@ -267,7 +267,7 @@ function CartPage() {
         </div>
 
         <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} NettiKauppa. Kaikki oikeudet pidätetään.</p>
+          <p>© {new Date().getFullYear()} Webstore. All rights reserved.</p>
         </div>
       </footer>
     </div>
