@@ -1,0 +1,26 @@
+.hero {
+  background-size: cover;
+  background-position: center;
+  padding: clamp(8rem, 15vh, 20rem) clamp(1em, 8vw, 10em);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 40vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4); /* dark overlay */
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}

@@ -136,6 +136,7 @@ input {
   background-size: 18px 18px;
   background-position: right 15px center;
   transition: all 250ms ease-in-out;
+  display: none;
 }
 
 /* HAMBURGER ICON */
@@ -245,7 +246,7 @@ input {
   background-color: #ffffff;
   display: flex;
   position: fixed;
-  top: 2rem;
+  top: 1.8rem;
   right: 5.2rem;
   z-index: 1;
   padding: 1em;
@@ -262,7 +263,7 @@ input {
   text-decoration: none;
   color: #213547;
   font-size: 1rem;
-  padding: 0.5rem 0.6rem;
+  padding: 0.1rem 0.4rem;
   width: 100%;
   transition: color 0.2s ease;
 }
@@ -380,6 +381,10 @@ input {
   background-color: #e05500;
 }
 
+.hero-buttons .button2:hover {
+  background-color: #ff6600;
+}
+
 /* ----- KEYFRAMES ----- */
 @keyframes fadeSlideIn {
   0% {
@@ -448,6 +453,7 @@ section {
     display: flex;
   flex-direction: column;
   gap: 2.5em;
+  text-align: center;
 }
 
 .tuotteet-wrapper {
@@ -585,7 +591,7 @@ html {
 
 /* === NAVIGATION === */
 nav {
-  padding: 0.3em clamp(1em, 4vw, 6em); /* was 8vw–10em */
+  padding: 0 clamp(1em, 4vw, 6em); /* was 8vw–10em */
 }
 
 nav h2 {

@@ -14,6 +14,7 @@ app.get('/category', async (request, response) => {
     console.error('Error fetching categories:', error);
     return response.status(500).json({ error: 'Database error' });
   }
+  response.json(data);
 })
 
 app.get('/products', async (request, response) => {

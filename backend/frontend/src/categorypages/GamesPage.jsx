@@ -1,24 +1,18 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from "react"
 import { Link } from 'react-router-dom'
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa'
-import './HomePage.css'
-import ProductCard from '../product_component/ProductCard'
-import CategoryCard from '../category_card_component/CategoryCard'
+import axios from "axios"
+import ProductCard from "../product_component/ProductCard"
+import Hero from "../category_hero_component/CategoryHero"
 
-function HomePage() {
+function GamesPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [onHero, setOnHero] = useState(true)
+  const [categoryImg, setCategoryImg] = useState('')
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [showAll, setShowAll] = useState(false)
-  const [categoryImg, setCategoryImg] = useState([])
-
-  const handleClick = () => {
-    setMenuOpen(false)
-  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,34 +27,15 @@ function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Fetch products from backend
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/products`)
-        if (!res.ok) throw new Error('Failed to fetch products')
-        const data = await res.json()
-        setProducts(data)
-      } catch (err) {
-        console.error('Error fetching products:', err)
-        setError('Tuotteiden lataaminen epäonnistui.')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchProducts()
-  }, [])
-
   useEffect(() => {
     axios
-    .get('http://localhost:3000/category')
-    .then(response => {
-      const data = response.data
-      setCategoryImg(data)
-    })
+      .get('http://localhost:3000/category')
+      .then(response => {
+        const data = response.data
+        setCategoryImg(data[2].category_img)
+      })
   }, [])
 
-  // Add to cart function
   const handleAddToCart = async (productId) => {
     const userId = 1 // TODO: Get from login system
 
@@ -81,15 +56,22 @@ function HomePage() {
     }
   }
 
-  const handleShowAll = (event) => {
-    event.preventDefault()
-    setShowAll(true)
-  }
-
-  const handleHide = (event) => {
-    event.preventDefault()
-    setShowAll(false)
-  }
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/products/category/games`)
+        if (!res.ok) throw new Error('Failed to fetch products')
+        const data = await res.json()
+        setProducts(data)
+      } catch (err) {
+        console.error('Error fetching products:', err)
+        setError('Tuotteiden lataaminen epäonnistui.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProducts()
+  }, [])
 
   return (
     <div>
@@ -123,35 +105,30 @@ function HomePage() {
 
       {scrolled && menuOpen && (
         <div className='dropdown-menu'>
-          <Link to="/" onClick={handleClick}>Home</Link>
-          <a href="components" onClick={handleClick}>Components</a>
-          <a href="consoles" onClick={handleClick}>consoles</a>
-          <a href="periphirals" onClick={handleClick}>Periphirals</a>
-          <a href="games" onClick={handleClick}>Games</a>
+          <Link to="/">Home</Link>
+          <a href="components">Components</a>
+          <a href="consoles">consoles</a>
+          <a href="periphirals">Periphirals</a>
+          <a href="games">Games</a>
           <hr />
-          <Link to="/login" onClick={handleClick}>Login</Link>
-          <Link to="/cart" onClick={handleClick}>Cart</Link>
+          <Link to="/login">Login</Link>
+          <Link to="/cart">Cart</Link>
         </div>
       )}
 
       {/* HERO SECTION */}
-      <header className="hero" id="home">
-        <div className="hero-content">
-          <h1>Newest products, Best prices</h1>
-          <h2>Discover our curated collection of premium electronics and accessories.</h2>
-          <div className="hero-buttons">
-            <button onClick={() => window.location.href = `#main`}>Shop Now</button>
-            <button className='button2'>Learn More</button>
-          </div>
-        </div>
-      </header>
+      <Hero
+        title='Games'
+        subtitle='The best collection of PC and Console games'
+        bg={categoryImg}
+      />
 
       {/* MAIN CONTENT */}
       <main id='main'>
         <section>
           <div className='main-otsikko'>
-            <h2>Most bought products</h2>
-            <h3>Discover our latest collection of tech products</h3>
+            <h2>All games</h2>
+            <h3>The best collection of PC and Console games</h3>
           </div>
 
           <div className='wrapper'>
@@ -167,55 +144,12 @@ function HomePage() {
                   product_id={product.product_id}
                   image={product.product_img}
                   title={product.product_name}
-                  product_info={product.product_info}
                   price={product.product_price}
                   onAddToCart={() => handleAddToCart(product.product_id)}
                 />
               ))}
             </div>
           </div>
-        </section>
-
-        {/* CATEGORY SECTION (using CategoryCard) */}
-        <section className="kategoria">
-          <div className="main-otsikko">
-            <h2>Categories</h2>
-            <hr />
-            {showAll === false ? (
-              <h3><a onClick={handleShowAll}>All categories</a></h3>
-            ) : <h3><a onClick={handleHide}>Hide</a></h3>}
-            
-          </div>
-
-          {showAll === false ? (
-          <div className="wrapper">
-            {categoryImg.slice(0, 2).map((category, idx) => (
-              <div className="tuotteet-wrapper" key={category.id || idx}>
-                <CategoryCard
-                  Category={category.category_name.toUpperCase()}
-                  imageUrl={category.category_img}
-                  onClick={() => window.location.href = `${category.category_name.toLowerCase() || ''}`}
-                />
-              </div>
-            ))}
-            <a onClick={handleShowAll}>Show all</a>
-          </div>
-          ) : 
-            <div className="wrapper">
-              {categoryImg.map((category, idx) => (
-                <div className='tuotteet-wrapper' key={category.id || idx}>
-                  <CategoryCard
-                    Category={category.category_name.toUpperCase()}
-                    imageUrl={category.category_img}
-                    onClick={() => window.location.href = `${category.category_name.toLowerCase() || ''}`}
-                  />
-
-                </div>
-              ))}
-              <a onClick={handleHide}>Hide</a>
-            </div>        
-          }
-          
         </section>
       </main>
 
@@ -264,4 +198,4 @@ function HomePage() {
   )
 }
 
-export default HomePage
+export default GamesPage

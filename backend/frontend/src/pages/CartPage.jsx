@@ -161,11 +161,11 @@ function CartPage() {
         <div className="otsikko-ja-kategoriat">
           <h1><Link to="/">Webstore</Link></h1>
           <div className={`kategoriat ${menuOpen ? 'open' : ''}`}>
-            <a href="/#komponentit">Components</a>
-            <a href="/#konsolit">Consoles</a>
-            <a href="/#oheislaitteet">Periphirals</a>
-            <a href="/#pelit">Games</a>
-            <input type="text" placeholder="Search" />
+            <a href="components">Komponentit</a>
+            <a href="consoles">Konsolit</a>
+            <a href="periphirals">Oheislaitteet</a>
+            <a href="games">Pelit</a>
+            <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Login</Link></h2>
               <h2><Link to="/cart">Cart</Link></h2>
@@ -177,10 +177,10 @@ function CartPage() {
       {scrolled && menuOpen && (
         <div className='dropdown-menu'>
           <Link to="/" onClick={handleClick}>Koti</Link>
-          <a href="/#komponentit" onClick={handleClick}>Components</a>
-          <a href="/#konsolit" onClick={handleClick}>Consoles</a>
-          <a href="/#oheislaitteet" onClick={handleClick}>Periphirals</a>
-          <a href="/#pelit" onClick={handleClick}>Games</a>
+          <a href="components" onClick={handleClick}>Komponentit</a>
+          <a href="consoles" onClick={handleClick}>Konsolit</a>
+          <a href="periphirals" onClick={handleClick}>Oheislaitteet</a>
+          <a href="games" onClick={handleClick}>Pelit</a>
           <hr />
           <Link to="/login" onClick={handleClick}>Login</Link>
           <Link to="/cart" onClick={handleClick}>Cart</Link>
@@ -240,10 +240,10 @@ function CartPage() {
           <div className="footer-section">
             <h3>In-store links</h3>
             <ul>
-              <li><a href="/#komponentit">Components</a></li>
-              <li><a href="/#konsolit">Consoles</a></li>
-              <li><a href="/#oheislaitteet">Periphirals</a></li>
-              <li><a href="/#pelit">Games</a></li>
+              <li><a href="components">Komponentit</a></li>
+              <li><a href="consoles">Konsolit</a></li>
+              <li><a href="periphirals">Oheislaitteet</a></li>
+              <li><a href="games">Pelit</a></li>
             </ul>
           </div>
 
