@@ -161,10 +161,10 @@ function CartPage() {
         <div className="otsikko-ja-kategoriat">
           <h1><Link to="/">NettiKauppa</Link></h1>
           <div className={`kategoriat ${menuOpen ? 'open' : ''}`}>
-            <a href="/#komponentit">Komponentit</a>
-            <a href="/#konsolit">Konsolit</a>
-            <a href="/#oheislaitteet">Oheislaitteet</a>
-            <a href="/#pelit">Pelit</a>
+            <a href="components">Komponentit</a>
+            <a href="consoles">Konsolit</a>
+            <a href="periphirals">Oheislaitteet</a>
+            <a href="games">Pelit</a>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Kirjaudu</Link></h2>
@@ -177,10 +177,10 @@ function CartPage() {
       {scrolled && menuOpen && (
         <div className='dropdown-menu'>
           <Link to="/" onClick={handleClick}>Koti</Link>
-          <a href="/#komponentit" onClick={handleClick}>Komponentit</a>
-          <a href="/#konsolit" onClick={handleClick}>Konsolit</a>
-          <a href="/#oheislaitteet" onClick={handleClick}>Oheislaitteet</a>
-          <a href="/#pelit" onClick={handleClick}>Pelit</a>
+          <a href="components" onClick={handleClick}>Komponentit</a>
+          <a href="consoles" onClick={handleClick}>Konsolit</a>
+          <a href="periphirals" onClick={handleClick}>Oheislaitteet</a>
+          <a href="games" onClick={handleClick}>Pelit</a>
           <hr />
           <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
           <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
@@ -240,10 +240,10 @@ function CartPage() {
           <div className="footer-section">
             <h3>Kauppa</h3>
             <ul>
-              <li><a href="/#komponentit">Komponentit</a></li>
-              <li><a href="/#konsolit">Konsolit</a></li>
-              <li><a href="/#oheislaitteet">Oheislaitteet</a></li>
-              <li><a href="/#pelit">Pelit</a></li>
+              <li><a href="components">Komponentit</a></li>
+              <li><a href="consoles">Konsolit</a></li>
+              <li><a href="periphirals">Oheislaitteet</a></li>
+              <li><a href="games">Pelit</a></li>
             </ul>
           </div>
 

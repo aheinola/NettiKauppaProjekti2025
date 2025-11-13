@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa'
 import './HomePage.css'
 import ProductCard from '../product_component/ProductCard'
+import CategoryCard from '../category_card_component/CategoryCard'
 
 function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -11,6 +13,8 @@ function HomePage() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showAll, setShowAll] = useState(false)
+  const [categoryImg, setCategoryImg] = useState([])
 
   const handleClick = () => {
     setMenuOpen(false)
@@ -47,6 +51,15 @@ function HomePage() {
     fetchProducts()
   }, [])
 
+  useEffect(() => {
+    axios
+    .get('http://localhost:3000/category')
+    .then(response => {
+      const data = response.data
+      setCategoryImg(data)
+    })
+  }, [])
+
   // Add to cart function
   const handleAddToCart = async (productId) => {
     const userId = 1 // TODO: Get from login system
@@ -68,6 +81,16 @@ function HomePage() {
     }
   }
 
+  const handleShowAll = (event) => {
+    event.preventDefault()
+    setShowAll(true)
+  }
+
+  const handleHide = (event) => {
+    event.preventDefault()
+    setShowAll(false)
+  }
+
   return (
     <div>
       {/* Navigation */}
@@ -85,10 +108,10 @@ function HomePage() {
         <div className="otsikko-ja-kategoriat">
           <h1><Link to="/">NettiKauppa</Link></h1>
           <div className={`kategoriat ${menuOpen ? 'open' : ''}`}>
-            <a href="#components">Komponentit</a>
-            <a href="#console">Konsolit</a>
-            <a href="#periphirals">Oheislaitteet</a>
-            <a href="#games">Pelit</a>
+            <a href="components">Komponentit</a>
+            <a href="consoles">Konsolit</a>
+            <a href="periphirals">Oheislaitteet</a>
+            <a href="games">Pelit</a>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Kirjaudu</Link></h2>
@@ -101,10 +124,10 @@ function HomePage() {
       {scrolled && menuOpen && (
         <div className='dropdown-menu'>
           <Link to="/" onClick={handleClick}>Koti</Link>
-          <a href="#components" onClick={handleClick}>Komponentit</a>
-          <a href="#console" onClick={handleClick}>Konsolit</a>
-          <a href="#periphirals" onClick={handleClick}>Oheislaitteet</a>
-          <a href="#games" onClick={handleClick}>Pelit</a>
+          <a href="components" onClick={handleClick}>Komponentit</a>
+          <a href="consoles" onClick={handleClick}>Konsolit</a>
+          <a href="periphirals" onClick={handleClick}>Oheislaitteet</a>
+          <a href="games" onClick={handleClick}>Pelit</a>
           <hr />
           <Link to="/login" onClick={handleClick}>Kirjaudu</Link>
           <Link to="/cart" onClick={handleClick}>Ostoskori</Link>
@@ -117,7 +140,7 @@ function HomePage() {
           <h1>Uusimmat tuotteet, Parhaat hinnat</h1>
           <h2>Discover our curated collection of premium electronics and accessories.</h2>
           <div className="hero-buttons">
-            <button>Shop Now</button>
+            <button onClick={() => window.location.href = `#main`}>Shop Now</button>
             <button className='button2'>Learn More</button>
           </div>
         </div>
@@ -152,38 +175,47 @@ function HomePage() {
           </div>
         </section>
 
-        {/* CATEGORY SECTIONS */}
-        {[
-          { key: 'components', display: 'Komponentit', dbName: 'components' },
-          { key: 'console', display: 'Konsolit', dbName: 'console' },
-          { key: 'periphirals', display: 'Oheislaitteet', dbName: 'periphirals' },
-          { key: 'games', display: 'Pelit', dbName: 'games' }
-        ].map((cat) => (
-          <section className='kategoria' key={cat.key}>
-            <div className='main-otsikko'>
-              <h2 id={cat.key}>{cat.display}</h2>
-              <hr />
-              <h3><a href={`#${cat.key}`}>Kaikki {cat.display.toLowerCase()}</a></h3>
-            </div>
+        {/* CATEGORY SECTION (using CategoryCard) */}
+        <section className="kategoria">
+          <div className="main-otsikko">
+            <h2>Kategoriat</h2>
+            <hr />
+            {showAll === false ? (
+              <h3><a onClick={handleShowAll}>Kaikki kategoriat</a></h3>
+            ) : <h3><a onClick={handleHide}>Piilota</a></h3>}
+            
+          </div>
 
-            <div className='wrapper'>
-              <div className='tuotteet-wrapper'>
-                {products
-                  .filter((p) => p.product_category?.toLowerCase() === cat.dbName.toLowerCase())
-                  .map((product) => (
-                    <ProductCard
-                      key={product.product_id}
-                      product_id={product.product_id}
-                      image={product.product_img}
-                      title={product.product_name}
-                      price={product.product_price}
-                      onAddToCart={() => handleAddToCart(product.product_id)}
-                    />
-                  ))}
+          {showAll === false ? (
+          <div className="wrapper">
+            {categoryImg.slice(0, 2).map((category, idx) => (
+              <div className="tuotteet-wrapper" key={category.id || idx}>
+                <CategoryCard
+                  Category={category.category_name.toUpperCase()}
+                  imageUrl={category.category_img}
+                  onClick={() => window.location.href = `${category.category_name.toLowerCase() || ''}`}
+                />
               </div>
-            </div>
-          </section>
-        ))}
+            ))}
+            <a onClick={handleShowAll}>Näytä Kaikki</a>
+          </div>
+          ) : 
+            <div className="wrapper">
+              {categoryImg.map((category, idx) => (
+                <div className='tuotteet-wrapper' key={category.id || idx}>
+                  <CategoryCard
+                    Category={category.category_name.toUpperCase()}
+                    imageUrl={category.category_img}
+                    onClick={() => window.location.href = `${category.category_name.toLowerCase() || ''}`}
+                  />
+
+                </div>
+              ))}
+              <a onClick={handleHide}>Piilota</a>
+            </div>        
+          }
+          
+        </section>
       </main>
 
       {/* FOOTER */}
@@ -197,10 +229,10 @@ function HomePage() {
           <div className="footer-section">
             <h3>Kauppa</h3>
             <ul>
-              <li><a href="#components">Komponentit</a></li>
-              <li><a href="#console">Konsolit</a></li>
-              <li><a href="#periphirals">Oheislaitteet</a></li>
-              <li><a href="#games">Pelit</a></li>
+              <li><a href="components">Komponentit</a></li>
+              <li><a href="console">Konsolit</a></li>
+              <li><a href="periphirals">Oheislaitteet</a></li>
+              <li><a href="games">Pelit</a></li>
             </ul>
           </div>
 
