@@ -15,10 +15,25 @@ function HomePage() {
   const [error, setError] = useState(null)
   const [showAll, setShowAll] = useState(false)
   const [categoryImg, setCategoryImg] = useState([])
+  const [user, setUser] = useState(null)
+  const [showProfile, setShowProfile] = useState(false)
 
   const handleClick = () => {
     setMenuOpen(false)
   }
+
+  // Check for logged in user
+  useEffect(() => {
+    const userData = localStorage.getItem('user')
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData))
+      } catch (err) {
+        console.error('Error parsing user data:', err)
+        localStorage.removeItem('user')
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,6 +106,13 @@ function HomePage() {
     setShowAll(false)
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    setUser(null)
+    setShowProfile(false)
+  }
+
   return (
     <div>
       {/* Navigation */}
@@ -115,7 +137,22 @@ function HomePage() {
             <hr/>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
-              <h2><Link to="/login">Login</Link></h2>
+              {user ? (
+                <div className="profile-section">
+                  <h2 onClick={() => setShowProfile(!showProfile)} style={{ cursor: 'pointer' }}>
+                    Profile
+                  </h2>
+                  {showProfile && (
+                    <div className="profile-dropdown">
+                      <p><strong>Name:</strong> {user.user_name}</p>
+                      <p><strong>Email:</strong> {user.user_email}</p>
+                      <button onClick={handleLogout} className="logout-btn">Logout</button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <h2><Link to="/login">Login</Link></h2>
+              )}
               <h2><Link to="/cart">Cart</Link></h2>
             </div>
           </div>
@@ -130,7 +167,20 @@ function HomePage() {
           <a href="periphirals" onClick={handleClick}>Periphirals</a>
           <a href="games" onClick={handleClick}>Games</a>
           <hr />
-          <Link to="/login" onClick={handleClick}>Login</Link>
+          {user ? (
+            <>
+              <div onClick={() => setShowProfile(!showProfile)} style={{ cursor: 'pointer' }}>Profile</div>
+              {showProfile && (
+                <div className="mobile-profile-info">
+                  <p><strong>Name:</strong> {user.user_name}</p>
+                  <p><strong>Email:</strong> {user.user_email}</p>
+                  <button onClick={handleLogout} className="logout-btn">Logout</button>
+                </div>
+              )}
+            </>
+          ) : (
+            <Link to="/login" onClick={handleClick}>Login</Link>
+          )}
           <Link to="/cart" onClick={handleClick}>Cart</Link>
         </div>
       )}

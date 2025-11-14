@@ -5,6 +5,10 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
   const [rating, setRating] = useState({ average: 0, count: 0 })
   const [showReviewModal, setShowReviewModal] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [reviewComment, setReviewComment] = useState('')
+  const [showReviewsList, setShowReviewsList] = useState(false)
+  const [reviews, setReviews] = useState([])
+  const [loadingReviews, setLoadingReviews] = useState(false)
 
   useEffect(() => {
     const fetchRating = async () => {
@@ -23,19 +27,51 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
     }
   }, [product_id])
 
+  const handleShowReviews = async () => {
+    setShowReviewsList(true)
+    setLoadingReviews(true)
+    
+    try {
+      console.log('Fetching reviews for product_id:', product_id)
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/reviews/${product_id}`)
+      if (!res.ok) throw new Error('Failed to fetch reviews')
+      const data = await res.json()
+      console.log('Fetched reviews:', data)
+      setReviews(data)
+    } catch (err) {
+      console.error('Error fetching reviews:', err)
+    } finally {
+      setLoadingReviews(false)
+    }
+  }
+
   const handleStarClick = async (starRating) => {
     if (submitting) return
     
     setSubmitting(true)
 
     try {
+      // Get user info from localStorage
+      const userData = localStorage.getItem('user')
+      let userId = null
+      if (userData) {
+        try {
+          const user = JSON.parse(userData)
+          userId = user.user_id
+        } catch (err) {
+          console.error('Error parsing user data:', err)
+        }
+      }
+
+      console.log('Submitting review for product_id:', product_id, 'rating:', starRating, 'comment:', reviewComment, 'user_id:', userId)
       const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           product_id: product_id,
           review_number: starRating,
-          review_comment: ''
+          review_comment: reviewComment,
+          user_id: userId
         })
       })
 
@@ -47,6 +83,7 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
 
       alert(`Review submitted: ${starRating} stars!`)
       setShowReviewModal(false)
+      setReviewComment('')
 
       // Refresh rating
       const ratingRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/reviews/${product_id}/average`)
@@ -87,7 +124,11 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
             <div className="rating">
               <span>{renderStars()}</span>
               <span className="rating-text">
-                {rating.average} / 5 ({rating.count} {rating.count === 1 ? 'review' : 'reviews'})
+                {rating.average} / 5 (
+                <span className="reviews-link" onClick={handleShowReviews}>
+                  {rating.count} {rating.count === 1 ? 'review' : 'reviews'}
+                </span>
+                )
               </span>
             </div>
           ) : (
@@ -113,6 +154,14 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
             <h2>Rate {title}</h2>
             <p>Click a star to rate this product</p>
             
+            <textarea
+              className="review-comment-input"
+              value={reviewComment}
+              onChange={(e) => setReviewComment(e.target.value)}
+              placeholder="Write your comment here (optional)..."
+              rows="4"
+            />
+            
             <div className="star-buttons">
               {[1, 2, 3, 4, 5].map(star => (
                 <button
@@ -132,6 +181,49 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
               disabled={submitting}
             >
               Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Reviews List Modal */}
+      {showReviewsList && (
+        <div className="modal-overlay" onClick={() => setShowReviewsList(false)}>
+          <div className="modal-content reviews-list-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Reviews for {title}</h2>
+            
+            {loadingReviews ? (
+              <p>Loading reviews...</p>
+            ) : reviews.length === 0 ? (
+              <p>No reviews yet.</p>
+            ) : (
+              <div className="reviews-container">
+                {reviews.map((review, index) => (
+                  <div key={index} className="review-item">
+                    <div className="review-header">
+                      <span className="reviewer-name">
+                        {review.shop_user?.user_name || 'Anonymous'}
+                      </span>
+                      <span className="review-stars">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} style={{ opacity: i < review.review_number ? 1 : 0.3 }}>⭐</span>
+                        ))}
+                      </span>
+                      <span className="review-rating">{review.review_number} / 5</span>
+                    </div>
+                    {review.review_comment && (
+                      <p className="review-comment">{review.review_comment}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              className="cancel-button"
+              onClick={() => setShowReviewsList(false)}
+            >
+              Close
             </button>
           </div>
         </div>

@@ -351,13 +351,12 @@ app.get('/reviews/:product_id', async (request, response) => {
   
   const { data, error } = await supabase
     .from('reviews')
-    .select('*')
-    .eq('product_id', product_id)
-    .order('created_at', { ascending: false });
+    .select('*, shop_user(user_name)')
+    .eq('product_id', product_id);
   
   if (error) {
     console.error('Error fetching reviews:', error);
-    return response.status(500).json({ error: 'Database error' });
+    return response.status(500).json({ error: 'Database error', details: error.message });
   }
   response.json(data);
 });
@@ -386,7 +385,7 @@ app.get('/reviews/:product_id/average', async (request, response) => {
 
 // Create a review
 app.post('/reviews', async (request, response) => {
-  const { product_id, review_number, review_comment } = request.body;
+  const { product_id, review_number, review_comment, user_id } = request.body;
   
   // Validate review_number is between 1 and 5
   if (!review_number || review_number < 1 || review_number > 5) {
@@ -396,13 +395,14 @@ app.post('/reviews', async (request, response) => {
   const reviewData = {
     product_id,
     review_number,
-    review_comment: review_comment || ''
+    review_comment: review_comment || '',
+    user_id: user_id || null
   };
   
   const { data, error } = await supabase
     .from('reviews')
     .insert([reviewData])
-    .select()
+    .select('*, shop_user(user_name)')
     .single();
   
   if (error) {
@@ -416,14 +416,100 @@ app.post('/reviews', async (request, response) => {
 app.get('/reviews', async (request, response) => {
   const { data, error } = await supabase
     .from('reviews')
-    .select('*')
-    .order('created_at', { ascending: false });
+    .select('*');
   
   if (error) {
     console.error('Error fetching reviews:', error);
-    return response.status(500).json({ error: 'Database error' });
+    return response.status(500).json({ error: 'Database error', details: error.message });
   }
   response.json(data);
+});
+
+// Magic link authentication
+app.post('/auth/magic-link', async (request, response) => {
+  const { email } = request.body;
+
+  if (!email) {
+    return response.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email: email,
+      options: {
+        emailRedirectTo: 'http://localhost:5173/auth/callback',
+      }
+    });
+
+    if (error) {
+      console.error('Magic link error:', error);
+      return response.status(400).json({ error: error.message });
+    }
+
+    response.json({ 
+      message: 'Magic link sent successfully',
+      data 
+    });
+  } catch (err) {
+    console.error('Server error:', err);
+    response.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Verify magic link token
+app.post('/auth/verify', async (request, response) => {
+  const { access_token, refresh_token } = request.body;
+
+  try {
+    const { data, error } = await supabase.auth.setSession({
+      access_token,
+      refresh_token
+    });
+
+    if (error) {
+      return response.status(400).json({ error: error.message });
+    }
+
+    // Get or create user in shop_user table
+    const { data: { user } } = await supabase.auth.getUser(access_token);
+    
+    if (user) {
+      // Check if user exists in shop_user table
+      const { data: shopUser, error: userError } = await supabase
+        .from('shop_user')
+        .select('*')
+        .eq('user_email', user.email)
+        .single();
+
+      if (userError && userError.code === 'PGRST116') {
+        // User doesn't exist, create them
+        const userName = user.email.split('@')[0];
+        const { data: newUser } = await supabase
+          .from('shop_user')
+          .insert([{
+            user_name: userName,
+            user_email: user.email
+          }])
+          .select()
+          .single();
+
+        return response.json({
+          message: 'Login successful',
+          user: newUser,
+          session: data.session
+        });
+      }
+
+      response.json({
+        message: 'Login successful',
+        user: shopUser,
+        session: data.session
+      });
+    }
+  } catch (err) {
+    console.error('Verification error:', err);
+    response.status(500).json({ error: 'Server error' });
+  }
 });
 
 const port = process.env.PORT || 3000;

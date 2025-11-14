@@ -133,6 +133,62 @@ h2 {
   align-items: center;
 }
 
+.profile-section {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 200px;
+  z-index: 1000;
+  color: #333;
+}
+
+.profile-dropdown p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  word-break: break-word;
+}
+
+.logout-btn {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  background: #ff6600;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.logout-btn:hover {
+  background: #e05500;
+}
+
+.mobile-profile-info {
+  padding: 0.5rem 0;
+  color: white;
+}
+
+.mobile-profile-info p {
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.mobile-profile-info .logout-btn {
+  margin-top: 0.5rem;
+}
+
 /* Input */
 input {
   font-size: clamp(0.9rem, 1vw, 0.9rem);
