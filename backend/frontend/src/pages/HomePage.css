@@ -121,6 +121,11 @@ h2 {
   font-weight: 400;
 }
 
+.kategoriat hr {
+  border: 0.5px solid #D9D9D9;
+  height: 30px;
+}
+
 /* User + Cart section */
 .kayttaja-ja-kori {
   display: flex;
@@ -225,6 +230,10 @@ input {
     transform: translateY(0);
   }
 
+  .kategoriat hr {
+    display: none;
+  }
+
   .kayttaja-ja-kori {
     width: 100%;
     justify-content: flex-start;
@@ -269,9 +278,13 @@ input {
   text-decoration: none;
   color: #213547;
   font-size: 1rem;
-  padding: 0.1rem 0.4rem;
+  padding: 0.25rem 0.4rem;
   width: 100%;
   transition: color 0.2s ease;
+}
+
+.dropdown-menu hr {
+  height: 20px;
 }
 
 @media (max-width: 900px) {
@@ -429,6 +442,10 @@ nav.on-main .hamburger .bar {
 
 section {
   padding: 1em clamp(1em, 8vw, 10em);
+}
+
+.main-otsikko hr {
+  margin: 0 1rem;
 }
 
 .main-otsikko h2 {
