@@ -112,6 +112,7 @@ function HomePage() {
             <a href="consoles">Consoles</a>
             <a href="periphirals">Periphirals</a>
             <a href="games">Games</a>
+            <hr />
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Login</Link></h2>
