@@ -345,6 +345,87 @@ app.get('/orders/:user_id', async (request, response) => {
   response.json(data);
 });
 
+// Get reviews for a product
+app.get('/reviews/:product_id', async (request, response) => {
+  const { product_id } = request.params;
+  
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('product_id', product_id)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching reviews:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  response.json(data);
+});
+
+// Get average rating for a product
+app.get('/reviews/:product_id/average', async (request, response) => {
+  const { product_id } = request.params;
+  
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('review_number')
+    .eq('product_id', product_id);
+  
+  if (error) {
+    console.error('Error fetching reviews:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  
+  if (!data || data.length === 0) {
+    return response.json({ average: 0, count: 0 });
+  }
+  
+  const average = data.reduce((sum, review) => sum + review.review_number, 0) / data.length;
+  response.json({ average: average.toFixed(1), count: data.length });
+});
+
+// Create a review
+app.post('/reviews', async (request, response) => {
+  const { product_id, review_number, review_comment } = request.body;
+  
+  // Validate review_number is between 1 and 5
+  if (!review_number || review_number < 1 || review_number > 5) {
+    return response.status(400).json({ error: 'Review number must be between 1 and 5' });
+  }
+  
+  const reviewData = {
+    product_id,
+    review_number,
+    review_comment: review_comment || ''
+  };
+  
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert([reviewData])
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error creating review:', error);
+    return response.status(500).json({ error: 'Database error', details: error.message });
+  }
+  response.status(201).json(data);
+});
+
+// Get all reviews
+app.get('/reviews', async (request, response) => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching reviews:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  response.json(data);
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

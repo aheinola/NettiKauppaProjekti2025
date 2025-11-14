@@ -143,6 +143,7 @@ function ComponentsPage() {
                   product_id={product.product_id}
                   image={product.product_img}
                   title={product.product_name}
+                  product_info={product.product_info}
                   price={product.product_price}
                   onAddToCart={() => handleAddToCart(product.product_id)}
                 />
