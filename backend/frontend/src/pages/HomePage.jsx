@@ -112,7 +112,7 @@ function HomePage() {
             <a href="consoles">Consoles</a>
             <a href="periphirals">Periphirals</a>
             <a href="games">Games</a>
-            <hr></hr>
+            <hr/>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Login</Link></h2>
@@ -183,7 +183,7 @@ function HomePage() {
             <h2>Categories</h2>
             <hr />
             {showAll === false ? (
-              <h3><a onClick={handleShowAll}>All categories</a></h3>
+              <h3><a onClick={handleShowAll}>Show all categories</a></h3>
             ) : <h3><a onClick={handleHide}>Hide</a></h3>}
             
           </div>
