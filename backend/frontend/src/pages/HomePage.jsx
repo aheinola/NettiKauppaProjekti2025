@@ -112,7 +112,7 @@ function HomePage() {
             <a href="consoles">Consoles</a>
             <a href="periphirals">Periphirals</a>
             <a href="games">Games</a>
-            <hr />
+            <hr></hr>
             <input type="text" placeholder="Hae" />
             <div className="kayttaja-ja-kori">
               <h2><Link to="/login">Login</Link></h2>
@@ -142,7 +142,7 @@ function HomePage() {
           <h2>Discover our curated collection of premium electronics and accessories.</h2>
           <div className="hero-buttons">
             <button onClick={() => window.location.href = `#main`}>Shop Now</button>
-            <button className='button2'>Learn More</button>
+            <button className='button2' onClick={() => window.location.href = `#footer`}>Contact us</button>
           </div>
         </div>
       </header>
@@ -168,6 +168,7 @@ function HomePage() {
                   product_id={product.product_id}
                   image={product.product_img}
                   title={product.product_name}
+                  product_info={product.product_info}
                   price={product.product_price}
                   onAddToCart={() => handleAddToCart(product.product_id)}
                 />
@@ -220,7 +221,7 @@ function HomePage() {
       </main>
 
       {/* FOOTER */}
-      <footer>
+      <footer id="footer">
         <div className="footer-container">
           <div className="footer-section logo">
             <h2><Link to="/">Webstore</Link></h2>

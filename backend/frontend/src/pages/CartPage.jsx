@@ -11,6 +11,9 @@ function CartPage() {
   const [cartItems, setCartItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [address, setAddress] = useState('')
 
   const userId = 1 // TODO: Get this from your login system later
 
@@ -124,11 +127,21 @@ function CartPage() {
       return
     }
 
+    if (!name || !email || !address) {
+      alert('Please fill in all fields (name, email, and address)!')
+      return
+    }
+
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId })
+        body: JSON.stringify({ 
+          user_id: userId,
+          name: name,
+          email: email,
+          address: address
+        })
       })
 
       if (!res.ok) throw new Error('Failed to create order')
@@ -136,8 +149,11 @@ function CartPage() {
       const data = await res.json()
       alert(`Order made! Ordernumber: ${data.order.order_id}`)
 
-      // Clear cart from state
+      // Clear cart from state and form
       setCartItems([])
+      setName('')
+      setEmail('')
+      setAddress('')
     } catch (err) {
       console.error('Error creating order:', err)
       alert('Error creating order. Please try again.')
@@ -191,7 +207,7 @@ function CartPage() {
       <header className="cart-hero" id="home">
         <div className="cart-hero-content">
           <div className='cart'>
-            <h1>Ostoskori</h1>
+            <h1>Cart</h1>
 
             {loading && <p>Loading cart...</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -219,6 +235,43 @@ function CartPage() {
 
                 <div className='cart-total'>
                   <h2>Total: €{total.toFixed(2)}</h2>
+                  <div className="form-group">
+                    <label htmlFor="name">Name</label>
+                    <input 
+                      type="text" 
+                      id="name" 
+                      placeholder="Enter your name" 
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  <br></br>
+                  <div className="form-group">
+                    <label htmlFor="email">Email</label>
+                    <input 
+                      type="email" 
+                      id="email" 
+                      placeholder="Enter your email" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  <br></br>
+                  <div className="form-group">
+                    <label htmlFor="address">Address</label>
+                    <input 
+                      type="text" 
+                      id="address" 
+                      placeholder="Enter your address" 
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  <br></br>
+
                   <button className='checkout-btn' onClick={handleCheckout}>
                     Order
                   </button>
@@ -234,7 +287,7 @@ function CartPage() {
         <div className="footer-container">
           <div className="footer-section logo">
             <h2><Link to="/">Webstore</Link></h2>
-            <p>Newest products, best prices – staright to you.</p>
+            <p>Newest products, best prices – straight to you.</p>
           </div>
 
           <div className="footer-section">

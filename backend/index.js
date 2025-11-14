@@ -33,7 +33,7 @@ app.get('/products/category/:category', async (request, response) => {
     .from('products')
     .select('*')
     .eq('product_category', category);
-  
+   
   if (error) {
     console.error('Error fetching products by category:', error);
     return response.status(500).json({ error: 'Database error' });
@@ -248,7 +248,7 @@ app.delete('/cart/user/:user_id', async (request, response) => {
 
 // Create order from cart
 app.post('/orders', async (request, response) => {
-  const { user_id } = request.body;
+  const { user_id, name, email, address } = request.body;
   
   try {
     // Get cart items with product details
@@ -270,11 +270,14 @@ app.post('/orders', async (request, response) => {
     // Create order
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .insert([{ user_id, total_price: total, status: 'pending' }])
+      .insert([{ user_id, total_price: total, status: 'pending', name, email, address }])
       .select()
       .single();
     
-    if (orderError) throw orderError;
+    if (orderError) {
+      console.error('Error creating order:', orderError);
+      throw orderError;
+    }
     
     // Create order items
     const orderItems = cartItems.map(item => ({
@@ -288,7 +291,10 @@ app.post('/orders', async (request, response) => {
       .from('order_items')
       .insert(orderItems);
     
-    if (itemsError) throw itemsError;
+    if (itemsError) {
+      console.error('Error creating order items:', itemsError);
+      throw itemsError;
+    }
     
     // Clear cart
     const { error: clearError } = await supabase
@@ -296,13 +302,30 @@ app.post('/orders', async (request, response) => {
       .delete()
       .eq('user_id', user_id);
     
-    if (clearError) throw clearError;
+    if (clearError) {
+      console.error('Error clearing cart:', clearError);
+      throw clearError;
+    }
     
     response.status(201).json({ order, message: 'Order created successfully' });
   } catch (error) {
     console.error('Error creating order:', error);
-    response.status(500).json({ error: 'Failed to create order' });
+    response.status(500).json({ error: 'Failed to create order', details: error.message });
   }
+});
+
+// Get all orders
+app.get('/orders', async (request, response) => {
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .order('order_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching orders:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  response.json(data);
 });
 
 // Get user's orders
@@ -317,6 +340,87 @@ app.get('/orders/:user_id', async (request, response) => {
   
   if (error) {
     console.error('Error fetching orders:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  response.json(data);
+});
+
+// Get reviews for a product
+app.get('/reviews/:product_id', async (request, response) => {
+  const { product_id } = request.params;
+  
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('product_id', product_id)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching reviews:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  response.json(data);
+});
+
+// Get average rating for a product
+app.get('/reviews/:product_id/average', async (request, response) => {
+  const { product_id } = request.params;
+  
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('review_number')
+    .eq('product_id', product_id);
+  
+  if (error) {
+    console.error('Error fetching reviews:', error);
+    return response.status(500).json({ error: 'Database error' });
+  }
+  
+  if (!data || data.length === 0) {
+    return response.json({ average: 0, count: 0 });
+  }
+  
+  const average = data.reduce((sum, review) => sum + review.review_number, 0) / data.length;
+  response.json({ average: average.toFixed(1), count: data.length });
+});
+
+// Create a review
+app.post('/reviews', async (request, response) => {
+  const { product_id, review_number, review_comment } = request.body;
+  
+  // Validate review_number is between 1 and 5
+  if (!review_number || review_number < 1 || review_number > 5) {
+    return response.status(400).json({ error: 'Review number must be between 1 and 5' });
+  }
+  
+  const reviewData = {
+    product_id,
+    review_number,
+    review_comment: review_comment || ''
+  };
+  
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert([reviewData])
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error creating review:', error);
+    return response.status(500).json({ error: 'Database error', details: error.message });
+  }
+  response.status(201).json(data);
+});
+
+// Get all reviews
+app.get('/reviews', async (request, response) => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.error('Error fetching reviews:', error);
     return response.status(500).json({ error: 'Database error' });
   }
   response.json(data);
