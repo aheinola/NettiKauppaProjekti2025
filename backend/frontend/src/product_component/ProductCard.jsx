@@ -86,22 +86,19 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
           {rating.count > 0 ? (
             <div className="rating">
               <span>{renderStars()}</span>
-              <span style={{ marginLeft: '8px', fontSize: '14px', color: '#666' }}>
+              <span className="rating-text">
                 {rating.average} / 5 ({rating.count} {rating.count === 1 ? 'review' : 'reviews'})
               </span>
             </div>
           ) : (
-            <p style={{ fontSize: '14px', color: '#999', fontStyle: 'italic' }}>No reviews yet</p>
+            <p className="no-reviews">No reviews yet</p>
           )}
           <p className="price">{price} €</p>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={onAddToCart} style={{ flex: 1 }}>Add to Cart</button>
+          <div className="button-group">
+            <button onClick={onAddToCart}>Add to Cart</button>
             <button 
+              className="rate-button"
               onClick={() => setShowReviewModal(true)}
-              style={{ 
-                backgroundColor: '#6c757d',
-                flex: 1
-              }}
             >
               Rate Product
             </button>
@@ -111,52 +108,18 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
 
       {/* Review Modal */}
       {showReviewModal && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000
-          }}
-          onClick={() => setShowReviewModal(false)}
-        >
-          <div 
-            style={{
-              backgroundColor: 'white',
-              padding: '30px',
-              borderRadius: '8px',
-              maxWidth: '400px',
-              width: '90%',
-              textAlign: 'center'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 style={{ marginTop: 0, marginBottom: '20px' }}>Rate {title}</h2>
-            <p style={{ marginBottom: '30px', color: '#666' }}>Click a star to rate this product</p>
+        <div className="modal-overlay" onClick={() => setShowReviewModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Rate {title}</h2>
+            <p>Click a star to rate this product</p>
             
-            <div style={{ fontSize: '48px', marginBottom: '30px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+            <div className="star-buttons">
               {[1, 2, 3, 4, 5].map(star => (
                 <button
                   key={star}
+                  className="star-button"
                   onClick={() => handleStarClick(star)}
                   disabled={submitting}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '48px',
-                    cursor: submitting ? 'not-allowed' : 'pointer',
-                    padding: 0,
-                    transition: 'transform 0.2s',
-                    opacity: submitting ? 0.5 : 1
-                  }}
-                  onMouseEnter={(e) => !submitting && (e.currentTarget.style.transform = 'scale(1.2)')}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 >
                   ⭐
                 </button>
@@ -164,17 +127,9 @@ function ProductCard({ image, title, price, onAddToCart, product_info, product_i
             </div>
 
             <button
+              className="cancel-button"
               onClick={() => setShowReviewModal(false)}
               disabled={submitting}
-              style={{
-                padding: '10px 30px',
-                backgroundColor: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: submitting ? 'not-allowed' : 'pointer',
-                fontSize: '16px'
-              }}
             >
               Cancel
             </button>
